@@ -245,14 +245,18 @@ function onDecimalSelectChange(e) {
  * Execute pivot.
  */
 function pivot() {
+	var numberFormat = $.pivotUtilities.numberFormat;
+	var precFormat = numberFormat({
+		digitsAfterDecimal: decimalPrec
+	});
+
+	var aggregator = $.pivotUtilities.aggregatorTemplates[agg](precFormat)([valueColumn]);
+
 	var pivotOptions = {
 		rows: [labelColumn],
-		aggregator: $.pivotUtilities.aggregatorTemplates[agg]()([valueColumn]),
+		cols: categoryColumn ? [categoryColumn] : [],
+		aggregator: aggregator,
 		renderer: atlasTSVRenderer
-	}
-
-	if (categoryColumn) {
-		pivotOptions['cols'] = [categoryColumn];
 	}
 
 	$($pivottable).pivot(tableData, pivotOptions);

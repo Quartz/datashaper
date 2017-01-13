@@ -9,6 +9,10 @@ var $columnSection = null;
 var $columns = null;
 var $aggSection = null;
 var $aggSelect = null;
+var $optionsSection = null;
+var $sortSelect = null;
+var $divideSelect = null;
+var $decimalSelect = null;
 var $outputSection = null;
 var $pivottable = null;
 
@@ -26,6 +30,9 @@ var tableData = null;
 var columnNames = null;
 var columnUses = null;
 var agg = 'sum';
+var sortOrder = 'rowAsc';
+var decimalPrec = 2;
+var divideBy = null;
 
 /*
  * On page load.
@@ -43,6 +50,11 @@ function init() {
 	$aggSection = $('#aggregation');
 	$aggSelect = $('#aggregation select');
 
+	$optionsSection = $('#options');
+	$sortSelect = $('#options select#sort');
+	$divideSelect = $('#options select#divide')
+	$decimalSelect = $('#options select#decimal')
+
 	$outputSection = $('#output')
 	$pivottable = $('#pivottable');
 
@@ -53,6 +65,9 @@ function init() {
 	$html.on('drop', onDrop);
 	$csvInput.bind('change', onCSVChange);
 	$aggSelect.bind('change', onAggSelectChange);
+	$sortSelect.bind('change', onSortSelectChange);
+	$divideSelect.bind('change', onDivideSelectChange);
+	$decimalSelect.bind('change', onDecimalSelectChange);
 
 	$uploadSection.show();
 }
@@ -145,6 +160,7 @@ function onParsed(parseResult) {
 
 	$columnSection.show();
 	$aggSection.show();
+	$optionsSection.show();
 	$outputSection.show();
 }
 
@@ -168,6 +184,33 @@ function onColumnUseChange(e) {
  */
 function onAggSelectChange(e) {
 	agg = $aggSelect.val();
+
+	pivot();
+}
+
+/*
+ * Sort order changed.
+ */
+function onSortSelectChange(e) {
+	sortOrder = $sortSelect.val();
+
+	pivot();
+}
+
+/*
+ * Divisor changed.
+ */
+function onDivideSelectChange(e) {
+	divideBy = parseInt($divideSelect.val());
+
+	pivot();
+}
+
+/*
+ * Decimal precision changed.
+ */
+function onDecimalSelectChange(e) {
+	decimalPrec = parseInt($decimalSelect.val());
 
 	pivot();
 }

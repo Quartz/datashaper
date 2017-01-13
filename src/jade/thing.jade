@@ -25,7 +25,7 @@ div#columns.section
         tbody
             form
             
-    p.hint <strong>Hint:</strong> You can <em>transpose</em> a dataset by setting the column containing the row names to "Use as categories."
+    p.hint <strong>Hint:</strong> You can <em>transpose</em> a dataset by swapping labels and categories.
 
 div#aggregation.section
     h2 Decide how to aggregate values
@@ -36,7 +36,7 @@ div#aggregation.section
     
     label Choose a method:
         select
-            option(value="sum") Add values
+            option(value="sum", selected="selected") Add values
             option(value="average") Average values
             option(value="count") Count all values
             option(value="countUnique") Count unique values
@@ -44,6 +44,37 @@ div#aggregation.section
             option(value="max") Pick largest value
             option(value="first") Pick first value from the data
             option(value="last") Pick last value from the data
+            
+div#options.section
+    h2 Tweak as needed
+    
+    p <strong>NOT YET IMPLEMENTED</strong>
+    
+    div.option
+        label Sort table
+            select#sort
+                option(value="rowAsc", selected="selected") Ascending by row names
+                option(value="rowDesc") Descending by row names
+                option(value="valueAsc") Ascending by value
+                option(value="valueDesc") Descending by value
+                option(value="none") In the same order as the original data
+
+    div.option
+        label Divide values by
+            select#divide
+                option(value="1") Nothing
+                option(value="1000") A thousand
+                option(value="1000000") A million
+                option(value="1000000000") A billion
+                option(value="1000000000000") A trillion
+
+    div.option
+        label Digits to include after a decimal point
+            select#decimal
+                option(value="0") 0
+                option(value="1") 1
+                option(value="2", selected="selected") 2
+                option(value="3") 3
 
 div#output.section
     h2 Your data is now ready for Atlas

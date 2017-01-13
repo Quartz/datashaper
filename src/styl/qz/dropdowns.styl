@@ -1,0 +1,65 @@
+qz-dropdown()
+	text-align center
+	line-height 1
+	font-family $qz-serif
+	margin-top 10px
+	position relative
+	height 1em
+	select
+		-webkit-appearance none
+		-moz-appearance none
+		-ms-appearance none
+		text-indent 0.01px
+		text-overflow ''
+		appearance none
+		outline none
+		border 0
+		border-bottom 1px dashed $qz-gray-3
+		border-radius 0
+		height 1em
+		position relative
+		min-width 9em
+		top 0
+		left 0
+		opacity 1
+		cursor pointer
+		display inline-block
+		*background-image:none; /* turn bg image for IE7 */
+		background url('../assets/selecticon.gif') no-repeat 100% 0px
+		background-position right center
+		padding 0 2px
+		box-sizing:content-box;
+		-ms-box-sizing:content-box;
+		-moz-box-sizing:content-box;
+		-webkit-box-sizing:content-box;
+		font-family $qz-sans-bold
+		font-weight bold
+
+	// for ie 10/11
+	@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none)
+		select
+			text-indent 0
+			text-overflow clip
+			-ms-appearance normal
+			appearance normal
+			outline initial
+			border initial
+			border-bottom none
+			max-width initial
+			border-radius initial
+			height initial
+			position initial
+			top initial
+			left initial
+			opacity 1
+			cursor initial
+			display initial
+			*background-image none
+			background: none
+			color initial
+			background-position initial
+			padding initial
+			box-sizing initial
+			-ms-box-sizing initial
+			font-size 15px
+			font-weight initial

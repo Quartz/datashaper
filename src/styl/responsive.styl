@@ -1,0 +1,204 @@
+// Default breakpoint. Change at will.
+$width-mobile = 600px
+
+//from https://github.com/Quartz/qzapp/blob/9f387d5ba7e4d08aa7c1c44802e8b96dd2205a8b/less/well/itemBodyElementsDesktop.less
+.item-body
+	h1, h2, h3, h4, h5, p, li, ol, ul, blockquote
+		font-smoothing antialiased
+
+	ul li, ol li, dl
+		font 20px/30px $qz-serif
+		color $qz-body-black
+
+	/*	WordPress generated markup styles */
+	ul
+		margin 15px auto 0 25px
+		padding 0
+		max-width 100%
+		list-style-type disc
+
+		ul
+			padding-top 15px
+			li
+				padding 0 0 15px 0
+				border 0
+				-webkit-background-size 10px 9px
+				-moz-background-size 10px 9px
+				-ms-background-size 10px 9px
+				-o-background-size 10px 9px
+				background-size 10px 9px
+				color $qz-body-black
+
+				&:last-child
+					padding-bottom 0px
+	li
+		padding 0 0 15px 0
+
+
+	ol
+		list-style-type decimal
+		margin-left 30px
+
+
+	/* PARAGRAPHS */
+
+	p
+		position relative
+		/*margin 0 0 22px 0*/
+		/* temporary for annotations */
+		/* if this is causing issues remove padding and insert margin */
+		margin 0 0 0 0
+		padding 16px 0 16px 0
+		line-height 1.6
+		color $qz-body-black
+		font 20px/30px $qz-serif
+		.transition(background, 0.5s)
+
+		&:last-child
+			padding 16px 0 0 0
+
+
+		img:only-child
+			padding:8px 0 8px 0
+
+		a
+			color $qz-body-link-blue
+			text-decoration none
+
+		a:hover
+			text-decoration underline
+
+
+
+	blockquote
+		padding 0 0 0 20px
+		margin:	16px 0px
+		position relative
+
+		&::before
+			width 5px
+			content " "
+			height 100%
+			top 7px
+			background-color $qz-gray-1
+			left 0
+			display block
+			position absolute
+
+
+
+		p
+			color $qz-body-black
+			padding 16px 0px
+			&:first-child
+				padding-top 0px
+				position relative
+				top 0px
+
+
+
+		ul
+			margin 30px 0 15px 25px
+
+
+
+	h1, h2
+		font 24px/32px $qz-sans-bold
+		font-style bold
+		color $qz-header-black
+		margin 19px 0 17px 0
+
+
+	h3
+		font 20px $qz-serif
+		color $qz-header-black
+		font-weight bold
+
+
+	h4, h5, h6
+		font-family $qz-sans-bold
+
+	h4
+		font-size 18px
+
+
+	h5, h6
+		font-size 16px
+
+
+	p + h2, p + h1, p + h3, p + h4, p + h5, p + h6
+		margin 19px 0 17px 0
+
+
+	blockquote + h2, blockquote + h1, blockquote + h3, blockquote + h4, blockquote + h5, blockquote + h6
+		margin 47px 0 13px 0
+
+
+
+// make sure images inside of content aren't too big
+	img
+		max-width 100%
+		height auto
+
+
+@media only screen and (max-width $width-mobile)
+	// anything narrow
+	// from https://github.com/Quartz/qzapp/blob/9f387d5ba7e4d08aa7c1c44802e8b96dd2205a8b/less/well/itemBodyElementsMobile.less
+	.item-body
+		img
+			margin 0 0 0 0;
+
+		p
+			font 17px/27px "PT Serif", Georgia, serif;
+			padding 10px 0 10px 0;
+
+			img
+				margin:8px 0 8px 0;
+
+
+		span.pull-quote
+			display none;
+
+
+		span.edition-credit
+			font-size 16px;
+			display inline-block;
+			padding 10px 0;
+
+
+		h1
+			margin 1em 0 0.5em 0;
+
+
+		h1, h2
+			font 18px/24px $qz-sans-bold;
+
+			&:first-child
+				margin 0.3em 0 0.2em 0;
+
+
+		h3
+			font 16px/24px $qz-serif;
+			font-weight bold;
+
+		h4
+			font 15px/23px $qz-sans-bold;
+
+		h5
+			font 14px/22px $qz-sans-bold;
+
+		h6
+			font 12px/20px $qz-sans-bold;
+
+		ol
+			margin-left:25px;
+
+		ol li, ul li, dl
+			font 16px/26px $qz-serif;
+
+		blockquote
+			&::before
+				height 100%;
+				top 7px;
+				background-color @color-gray-light;
+				left -1px;

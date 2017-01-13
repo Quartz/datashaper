@@ -1,0 +1,25 @@
+doctype html
+html
+	head
+		meta(charset='utf-8')
+		meta(http-equiv='X-UA-Compatible', content='IE=edge')
+		title Datashaper
+		meta(name='description', content='A tool for reshaping data to fit in Atlas.')
+		meta(name='viewport', content='width=device-width, initial-scale=1')
+		link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic")
+		link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.7.0/pivot.min.css")
+		link(rel='stylesheet', href='css/main.css')
+
+	body
+		div.item-body
+			div#interactive-content
+				include thing.jade
+
+		script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js')
+		script(src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js')
+		script(src='https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.7.0/pivot.min.js')
+		script(src='https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.7.0/export_renderers.min.js')
+		script(src='https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.min.js')
+		script(src='https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.6.0/tips_data.min.js')
+		script(src='js/config.js')
+		script(src='js/thing.js')

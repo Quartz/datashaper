@@ -1,0 +1,11 @@
+{
+	"hed": "This Quartz Thing has not connected to a Google Doc",
+	"dek": "Perhaps you forgot to start the server? Make viewable to anyone with the link?",
+	"items": [{
+		"copy": "Ut enim ad minim veniam, <a href=\"https://qz.com/re/quartzthings\">quis nostrud exercitation</a> ullamco laboris nisi ut aliquip ex ea commodo consequat."
+	}, {
+		"copy": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+	}, {
+		"copy": "Excepteur sint occaecat cupidatat non proident, <a href=\"https://qz.com\">sunt in culpa</a> qui officia deserunt mollit anim id est laborum"
+	}]
+}

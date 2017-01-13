@@ -1,0 +1,1 @@
+var ENV = '/* @echo ENV */';

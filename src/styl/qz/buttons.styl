@@ -1,0 +1,19 @@
+qz-button-group()
+	text-align center
+	button
+		color white
+		border none
+		background-color $qz-gray-1
+		font-family $qz-sans
+		border-radius 3px
+		margin 2px 4px 2px 0
+		vertical-align middle
+		padding 0px 8px
+		line-height 2em
+		display inline-block
+		&.active
+			//font-family $qz-sans-bold
+			background-color $qz-purp-2
+			transition background-color 0.2s linear
+		&:focus
+			outline 0

@@ -3,7 +3,7 @@ var d3 = require('d3');
 
 var $html = null;
 var $body = null;
-var $csv = null;
+var $csvInput = null;
 var $output = null;
 
 var renderers = {
@@ -14,7 +14,7 @@ var renderers = {
 function init() {
     $html = $('html');
     $body = $('body');
-    $csv = $('#csv');
+    $csvInput = $('#csv input');
     $output = $('#output');
 
     $html.on('dragover', onDrag);
@@ -22,7 +22,7 @@ function init() {
     $html.on('dragexit', onDragEnd);
     $html.on('dragleave', onDragEnd);
     $html.on('drop', onDrop);
-    $csv.bind('change', onCSVChange);
+    $csvInput.bind('change', onCSVChange);
 }
 
 function onCSVChange(e) {

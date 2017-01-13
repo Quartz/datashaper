@@ -1,9 +1,28 @@
+// NPM modules
 var _ = require('lodash');
 
 var $html = null;
 var $body = null;
+var $uploadSection = null;
 var $csvInput = null;
-var $output = null;
+var $columnSection = null;
+var $columns = null;
+var $outputSection = null;
+var $pivottable = null;
+
+var columnTemplate = _.template('\
+    <tr class="column">\
+        <td><%= columnName %></td>\
+        <td><input type="radio" name="><%= columnName %>" value="labels" /></td>\
+        <td><input type="radio" name="><%= columnName %>" value="categories" /></td>\
+        <td><input type="radio" name="><%= columnName %>" value="values" /></td>\
+        <td><input type="radio" name="><%= columnName %>" value="ignore" /></td>\
+    </tr>');
+
+// Global state
+var tableData = null;
+var columnNames = null;
+var columnUses = null;
 
 /*
  * On page load.
@@ -11,8 +30,15 @@ var $output = null;
 function init() {
   $html = $('html');
   $body = $('body');
-  $csvInput = $('#csv input');
-  $output = $('#output');
+
+  $uploadSection = $('#upload');
+  $csvInput = $('#upload input');
+
+  $columnSection = $('#columns');
+  $columns = $('#columns tbody');
+
+  $outputSection = $('#output')
+  $pivottable = $('#pivottable');
 
   $html.on('dragover', onDrag);
   $html.on('dragend', onDragEnd);
@@ -20,6 +46,8 @@ function init() {
   $html.on('dragleave', onDragEnd);
   $html.on('drop', onDrop);
   $csvInput.bind('change', onCSVChange);
+
+  $uploadSection.show();
 }
 
 /*
@@ -56,18 +84,22 @@ function onDrop(e) {
   e.stopPropagation();
   e.preventDefault();
   $body.removeClass('drop-border');
-  parseAndPivot(e.originalEvent.dataTransfer.files[0]);
+  parse(e.originalEvent.dataTransfer.files[0]);
 }
 
 /*
  * Process file upload.
  */
 function parse(f) {
-  $($output).html('<p align="center" style="color:grey;">(processing...)</p>')
+  $columnSection.hide();
+  $columns.html('');
+  $outputSection.hide();
+
+  $($pivottable).html('<p align="center" style="color:grey;">(processing...)</p>')
 
   Papa.parse(f, {
     skipEmptyLines: true,
-    complete: pivot
+    complete: onParsed,
     error: function(e) {
       alert(e)
     },
@@ -75,21 +107,96 @@ function parse(f) {
 }
 
 /*
- * Execute pivot.
+ * When uploaded data has been parsed.
  */
-function pivot(parseResult) {
-  $($output).pivotUI(parseResult.data, {
-    renderers: {
-      'Table': $.pivotUtilities.renderers['Table'],
-      'Atlas CSV': atlasCSVRenderer
-    },
-  }, true);
+function onParsed(parseResult) {
+  tableData = parseResult.data;
+  columnNames = tableData[0];
+
+  _.each(columnNames, function(columnName, i) {
+    var column = columnTemplate({
+      'columnName': columnName
+    });
+
+    var $column = $(column);
+    $columns.append($column);
+
+    var defaultUse = 'ignore';
+
+    if (i == 0) {
+      defaultUse = 'labels';
+    } else if (i == 1) {
+      defaultUse = 'values';
+    }
+
+    $column.find('[value="' + defaultUse + '"]').attr('checked', 'checked');
+
+    $column.find('input').on('change', onColumnUseChange)
+  });
+
+  // Populate global state
+  onColumnUseChange();
+
+  $columnSection.show();
+  $outputSection.show();
+
+  pivot();
 }
 
 /*
- * pivottable CSV renderer
+ * Column use selected.
  */
-function atlasCSVRenderer(pivotData, opts) {
+function onColumnUseChange(e) {
+  columnUses = {};
+
+  _.each(columnNames, function(columnName, i) {
+    var use = $columns.find('input:checked').eq(i).val();
+
+    columnUses[columnName] = use;
+  });
+
+  pivot();
+}
+
+/*
+ * Execute pivot.
+ */
+function pivot() {
+  // TODO: validate only one labels and only one categories
+
+  var labelColumn = null;
+  var categoryColumn = null;
+  var valueColumn = null;
+
+  _.each(columnNames, function(columnName) {
+    var use = columnUses[columnName];
+
+    if (use == 'labels') {
+      labelColumn = columnName;
+    } else if (use == 'categories') {
+      categoryColumn = columnName;
+    } else if (use == 'values') {
+      valueColumn = columnName;
+    }
+  });
+
+  var pivotOptions = {
+    rows: [labelColumn],
+    aggregator: $.pivotUtilities.aggregatorTemplates.sum()([valueColumn]),
+    renderer: atlasTSVRenderer
+  }
+
+  if (categoryColumn) {
+    pivotOptions['cols'] = [categoryColumn];
+  }
+
+  $($pivottable).pivot(tableData, pivotOptions);
+}
+
+/*
+ * pivottable TSV renderer customized for Atlas.
+ */
+function atlasTSVRenderer(pivotData, opts) {
   var defaults = {
     'localeStrings': {}
   };
@@ -142,7 +249,7 @@ function atlasCSVRenderer(pivotData, opts) {
       if (value) {
         row.push(value);
       } else {
-        row.push('');
+        row.push('null');
       }
     })
 

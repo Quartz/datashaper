@@ -24,9 +24,29 @@ div#columns.section
                 th Ignore
         tbody
             form
+            
+    p.hint <strong>Hint:</strong> You can <em>transpose</em> a dataset by setting the column containing the row names to "Use as categories."
+
+div#aggregation.section
+    h2 Decide how to aggregate values
+    
+    p If you're column contains more than one row or column with the same "name", then the values from the corresponding cells will need to be summarized in your output table. For example, if your dataset has <code>country</code>, <code>state</code>, and <code>population</code> columns, but you just want to chart the <em>total</em> population of each country, then you would want to <strong>add values</strong> from the <code>population</code> column for all rows with the same <code>country</code>.
+    
+    p If you aren't sure what to pick, you probably want to <strong>add values</strong>.
+    
+    label Choose a method:
+        select
+            option(value="sum") Add values
+            option(value="average") Average values
+            option(value="count") Count all values
+            option(value="countUnique") Count unique values
+            option(value="min") Pick smallest value
+            option(value="max") Pick largest value
+            option(value="first") Pick first value from the data
+            option(value="last") Pick last value from the data
 
 div#output.section
-    h2 Your data, ready for Atlas
+    h2 Your data is now ready for Atlas
 
     div#pivottable
         

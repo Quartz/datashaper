@@ -33,7 +33,7 @@ var content = {};
 
 var qzdataPath = process.env.QZDATA_PATH || "~/qzdata";
 var thingName = "datashaper";
-var thingPath = qzdataPath + "/" + "2016/" + thingName;
+var thingPath = qzdataPath + "/" + thingName;
 
 var isProd = args.build ? true : false;
 var preprocessOpts = {

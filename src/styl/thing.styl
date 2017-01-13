@@ -1,22 +1,30 @@
+$width = 800px
+
 body
     padding 10px
     border 5px dotted
     border-color $qz-background-gray
     height 100
 
-
 .drop-border
     border-color lightgrey
 
-.item-body h1
-    font-size 36px
-    font-weight bold
-    margin-top 0
-    margin-bottom 0
+.item-body
+    h1
+        font-size 36px
+        font-weight bold
+        margin-top 0
+        margin-bottom 0
 
-.item-body h2
-    margin-top 0
-    margin-bottom 0
+    h2
+        margin-top 0
+        margin-bottom 0
+
+    p
+        width $width
+
+        .hint
+            font-size 0.8em
 
 .section
     display none
@@ -36,3 +44,8 @@ body
 
     th, td
         padding 5px 15px 5px 5px
+
+#pivottable
+    textarea
+        width $width
+        height 400px

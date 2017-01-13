@@ -7,6 +7,8 @@ var $uploadSection = null;
 var $csvInput = null;
 var $columnSection = null;
 var $columns = null;
+var $aggSection = null;
+var $aggSelect = null;
 var $outputSection = null;
 var $pivottable = null;
 
@@ -23,6 +25,7 @@ var columnTemplate = _.template('\
 var tableData = null;
 var columnNames = null;
 var columnUses = null;
+var agg = 'sum';
 
 /*
  * On page load.
@@ -37,6 +40,9 @@ function init() {
   $columnSection = $('#columns');
   $columns = $('#columns tbody');
 
+  $aggSection = $('#aggregation');
+  $aggSelect = $('#aggregation select');
+
   $outputSection = $('#output')
   $pivottable = $('#pivottable');
 
@@ -46,6 +52,7 @@ function init() {
   $html.on('dragleave', onDragEnd);
   $html.on('drop', onDrop);
   $csvInput.bind('change', onCSVChange);
+  $aggSelect.bind('change', onAggSelectChange);
 
   $uploadSection.show();
 }
@@ -130,7 +137,6 @@ function onParsed(parseResult) {
     }
 
     $column.find('[value="' + defaultUse + '"]').attr('checked', 'checked');
-
     $column.find('input').on('change', onColumnUseChange)
   });
 
@@ -138,9 +144,8 @@ function onParsed(parseResult) {
   onColumnUseChange();
 
   $columnSection.show();
+  $aggSection.show();
   $outputSection.show();
-
-  pivot();
 }
 
 /*
@@ -156,6 +161,15 @@ function onColumnUseChange(e) {
   });
 
   pivot();
+}
+
+/*
+ * Select aggregator was changed.
+ */
+function onAggSelectChange(e) {
+    agg = $aggSelect.val();
+
+    pivot();
 }
 
 /*
@@ -182,7 +196,7 @@ function pivot() {
 
   var pivotOptions = {
     rows: [labelColumn],
-    aggregator: $.pivotUtilities.aggregatorTemplates.sum()([valueColumn]),
+    aggregator: $.pivotUtilities.aggregatorTemplates[agg]()([valueColumn]),
     renderer: atlasTSVRenderer
   }
 
@@ -262,10 +276,7 @@ function atlasTSVRenderer(pivotData, opts) {
     text += r.join('\t') + '\n';
   });
 
-  return $("<textarea>").text(text).css({
-    width: ($(window).width() / 2) + "px",
-    height: ($(window).height() / 2) + "px"
-  });
+  return $("<textarea>").text(text) ;
 }
 
 // Bind on-load handler

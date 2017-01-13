@@ -5,21 +5,21 @@ p This tool reformats a CSV dataset so it will display well in <a href="https://
 div#upload.section
     h2 Upload a file
 
-    p <strong>Select a file to upload, or drag and drop a file onto this window.</strong> Your file must have a header row!
+    p Select a file to upload, or drag and drop a file onto this window. Your file must have a header row!
     
     input(type="file")
 
 div#columns.section
     h2 Choose your columns
 
-    p Please select how to use each column in your table.
+    p Please select how each column should be used in your table.
     
     table
         thead
             tr
                 th Column
-                th Use as labels
-                th Use as categories
+                th Use as labels<br /><span class="subhead">(Row names)</span>
+                th Use as categories<br /><span class="subhead">(Column names)</span>
                 th Use as values
                 th Ignore
         tbody

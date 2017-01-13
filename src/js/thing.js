@@ -29,6 +29,9 @@ var columnTemplate = _.template('\
 var tableData = null;
 var columnNames = null;
 var columnUses = null;
+var labelColumn = null;
+var categoryColumn = null;
+var valueColumn = null;
 var agg = 'sum';
 var sortOrder = 'rowAsc';
 var decimalPrec = 2;
@@ -168,12 +171,35 @@ function onParsed(parseResult) {
  * Column use selected.
  */
 function onColumnUseChange(e) {
-	columnUses = {};
+	labelColumn = null;
+	categoryColumn = null;
+	valueColumn = null;
 
 	_.each(columnNames, function(columnName, i) {
 		var use = $columns.find('input:checked').eq(i).val();
 
-		columnUses[columnName] = use;
+		if (use == 'labels') {
+			if (labelColumn) {
+				alert('You may only have one label column!')
+				return;
+			}
+
+			labelColumn = columnName;
+		} else if (use == 'categories') {
+			if (categoryColumn) {
+				alert('You may only have one category column!')
+				return;
+			}
+
+			categoryColumn = columnName;
+		} else if (use == 'values') {
+
+			if (valueColumn) {
+				alert('You may only have one value column!')
+				return;
+			}
+			valueColumn = columnName;
+		}
 	});
 
 	pivot();
@@ -219,37 +245,6 @@ function onDecimalSelectChange(e) {
  * Execute pivot.
  */
 function pivot() {
-	var labelColumn = null;
-	var categoryColumn = null;
-	var valueColumn = null;
-
-	_.each(columnNames, function(columnName) {
-		var use = columnUses[columnName];
-
-		if (use == 'labels') {
-			if (labelColumn) {
-				alert('You may only have one label column!')
-				return;
-			}
-
-			labelColumn = columnName;
-		} else if (use == 'categories') {
-			if (categoryColumn) {
-				alert('You may only have one category column!')
-				return;
-			}
-
-			categoryColumn = columnName;
-		} else if (use == 'values') {
-
-			if (valueColumn) {
-				alert('You may only have one value column!')
-				return;
-			}
-			valueColumn = columnName;
-		}
-	});
-
 	var pivotOptions = {
 		rows: [labelColumn],
 		aggregator: $.pivotUtilities.aggregatorTemplates[agg]()([valueColumn]),
@@ -267,11 +262,7 @@ function pivot() {
  * pivottable TSV renderer customized for Atlas.
  */
 function atlasTSVRenderer(pivotData, opts) {
-	var defaults = {
-		'localeStrings': {}
-	};
-
-	var opts = $.extend(true, {}, defaults, opts)
+	var opts = $.extend(true, {}, opts)
 
 	var rowKeys = pivotData.getRowKeys();
 
@@ -288,22 +279,20 @@ function atlasTSVRenderer(pivotData, opts) {
 	var rowAttrs = pivotData.rowAttrs;
 	var colAttrs = pivotData.colAttrs;
 
-	var result = []
-	var row = []
+	var header = [];
+	var rows = [];
 
 	_.each(rowAttrs, function(rowAttr) {
-		row.push(rowAttr);
+		header.push(rowAttr);
 	});
 
 	if (colKeys.length == 1 && colKeys[0].length == 0) {
-		row.push(pivotData.aggregatorName);
+		header.push(pivotData.aggregatorName);
 	} else {
 		_.each(colKeys, function(colKey) {
-			row.push(colKey.join("-"));
+			header.push(colKey.join("-"));
 		});
 	}
-
-	result.push(row);
 
 	_.each(rowKeys, function(rowKey) {
 		var row = [];
@@ -323,16 +312,38 @@ function atlasTSVRenderer(pivotData, opts) {
 			}
 		})
 
-		result.push(row);
+		rows.push(row);
 	});
 
-	var text = '';
+	if (sortOrder == 'rowAsc') {
+		rows.sort(columnSorter(0, false));
+	} else if (sortOrder == 'rowDesc') {
+		rows.sort(columnSorter(0, true));
+	} else if (sortOrder == 'valueAsc') {
+		rows.sort(columnSorter(1, false));
+	} else if (sortOrder == 'valueDesc') {
+		rows.sort(columnSorter(1, true));
+	}
 
-	_.each(result, function(r) {
-		text += r.join('\t') + '\n';
+	var text = header.join('\t') + '\n';
+
+	_.each(rows, function(row) {
+		text += row.join('\t') + '\n';
 	});
 
 	return $("<textarea>").text(text);
+}
+
+var columnSorter = function(columnIndex, reverse) {
+	return function(a, b) {
+		if (a[columnIndex] < b[columnIndex]) {
+			return reverse ? 1 : -1;
+		} else if (a[columnIndex] > b[columnIndex]) {
+			return reverse ? -1 : 1;
+		}
+
+		return 0;
+	}
 }
 
 // Bind on-load handler

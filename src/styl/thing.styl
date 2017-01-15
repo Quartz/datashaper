@@ -24,7 +24,7 @@ body
 
 .section
     display none
-    width 40%
+    width 45%
     margin-top 20px
 
 #intro
@@ -37,15 +37,18 @@ body
         padding-bottom 16px     // Match <p>
 
 #columns
-    th
-        text-align left
-        vertical-align top
+    table
+        padding-bottom 16px
 
-        .subhead
-            color $qz-gray-2
+        th
+            text-align left
+            vertical-align top
 
-    th, td
-        padding 5px 15px 5px 5px
+            .subhead
+                color $qz-gray-2
+
+        th, td
+            padding 5px 15px 5px 5px
 
 #options
     .option
@@ -53,12 +56,21 @@ body
 
 #preview
     display: none
-    width: 55%
+    width: 50%
     position: fixed
-    left: 45%
+    left: 50%
     top: 10px
 
-    // #pivottable
-    //     textarea
-    //         width 90%
-    //         height 400px
+    table
+        font-size 12px
+        text-align left
+        border-collapse collapse
+
+        th
+            background-color $qz-map-land-fill
+            font-weight bold
+
+        th, td
+            padding 5px
+            border 1px solid $qz-gray-1
+            text-align right

@@ -51,7 +51,13 @@ function previewRenderer(pivotData, opts) {
         tr = document.createElement('tr');
 
         _.each(row, function(d, j) {
-            td = document.createElement('td');
+            var elType = 'td';
+
+            if (rowAttrs && j == 0) {
+                elType = 'th';
+            }
+
+            td = document.createElement(elType);
             td.textContent = d;
 
             tr.appendChild(td);

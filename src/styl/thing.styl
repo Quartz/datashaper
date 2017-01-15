@@ -25,7 +25,7 @@ body
 .section
     display none
     width 45%
-    margin-top 20px
+    margin-top 30px
 
 #intro
     display block
@@ -34,21 +34,26 @@ body
 #upload
     input
         margin-top 10px
-        padding-bottom 16px     // Match <p>
 
 #columns
     table
-        padding-bottom 16px
-
         th
             text-align left
             vertical-align top
+            border-bottom 1px solid $qz-gray-1
 
             .subhead
                 color $qz-gray-2
 
         th, td
             padding 5px 15px 5px 5px
+            text-align center
+
+        tr th:first-child, tr td:first-child
+            text-align left
+
+        tr td:first-child
+            border-right 1px solid $qz-gray-1
 
 #options
     .option

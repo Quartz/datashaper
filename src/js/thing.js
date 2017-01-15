@@ -34,8 +34,8 @@ var categoryColumn = null;
 var valueColumn = null;
 var agg = 'sum';
 var sortOrder = 'rowAsc';
+var divideBy = 1;
 var decimalPrec = 2;
-var divideBy = null;
 
 /*
  * On page load.
@@ -237,9 +237,21 @@ function onDivideSelectChange(e) {
  */
 function onDecimalSelectChange(e) {
 	decimalPrec = parseInt($decimalSelect.val());
+	console.log(decimalPrec);
 
 	pivot();
 }
+
+/*
+ * Quickly format a number for display.
+ */
+// function numberFormat(n) {
+// 	if (isNaN(n) || !isFinite(n)) {
+// 		return '';
+// 	}
+//
+// 	return (n / divideBy).toFixed(decimalPrec);
+// }
 
 /*
  * Execute pivot.
@@ -247,7 +259,9 @@ function onDecimalSelectChange(e) {
 function pivot() {
 	var numberFormat = $.pivotUtilities.numberFormat;
 	var precFormat = numberFormat({
-		digitsAfterDecimal: decimalPrec
+		scaler: 1 / divideBy,
+		digitsAfterDecimal: decimalPrec,
+		showZero: true
 	});
 
 	var aggregator = $.pivotUtilities.aggregatorTemplates[agg](precFormat)([valueColumn]);
@@ -310,7 +324,7 @@ function atlasTSVRenderer(pivotData, opts) {
 			var value = agg.value();
 
 			if (value) {
-				row.push(value);
+				row.push(agg.format(value));
 			} else {
 				row.push('null');
 			}

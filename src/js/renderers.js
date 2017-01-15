@@ -5,37 +5,36 @@ var _ = require('lodash');
  * This is a modified version of pivottable's default renderer.
  */
 function previewRenderer(pivotData, opts) {
+    opts = $.extend({}, opts);
+
     colAttrs = pivotData.colAttrs;
     rowAttrs = pivotData.rowAttrs;
     rowKeys = pivotData.getRowKeys();
     colKeys = pivotData.getColKeys();
 
     result = document.createElement("table");
-    result.className = "pvtTable";
-
-    // the first few rows are for col headers
     thead = document.createElement("thead");
     tr = document.createElement("tr");
 
+    // Label column header
     th = document.createElement("th");
-    th.className = "pvtAxisLabel";
-    th.textContent = 'TODO (labelColumn)';
+    th.textContent = rowAttrs[0] || '';
     tr.appendChild(th);
 
+    // Category column headers
     if (colAttrs.length > 0) {
         _.each(colAttrs, function(c, j) {
             _.each(colKeys, function(colKey, i) {
                 th = document.createElement("th");
-                th.className = "pvtColLabel";
                 th.textContent = colKey[j];
 
                 tr.appendChild(th);
             })
         });
+    // Value column header
     } else {
         th = document.createElement("th");
-        th.className = "pvtColLabel";
-        th.textContent = 'TODO (valueColumn)';
+        th.textContent = opts.valueColumn || '';
 
         tr.appendChild(th);
     }
@@ -43,48 +42,25 @@ function previewRenderer(pivotData, opts) {
     thead.appendChild(tr);
     result.appendChild(thead);
 
-    // now the actual data rows, with their row headers and totals
+    rows = getSortedRows(pivotData, opts.sortOrder);
+
     tbody = document.createElement("tbody");
 
-    _.each(rowKeys, function(rowKey, i) {
-        tr = document.createElement("tr");
+    // Data rows
+    _.each(rows, function(row, i) {
+        tr = document.createElement('tr');
 
-        _.each(rowKey, function(txt, j) {
-            th = document.createElement("th");
-            th.className = "pvtRowLabel";
-            th.textContent = txt;
-            tr.appendChild(th);
-        });
-
-        if (colKeys.length > 0) {
-            _.each(colKeys, function(colKey, j) {
-                aggregator = pivotData.getAggregator(rowKey, colKey);
-                val = aggregator.value();
-                td = document.createElement("td");
-                td.className = "pvtVal row#{i} col#{j}";
-                td.textContent = aggregator.format(val);
-                td.setAttribute("data-value", val);
-
-                tr.appendChild(td);
-            });
-        } else {
-            totalAggregator = pivotData.getAggregator(rowKey, [])
-            val = totalAggregator.value()
-            td = document.createElement("td")
-            td.className = "pvtTotal rowTotal"
-            td.textContent = totalAggregator.format(val)
-            td.setAttribute("data-value", val)
+        _.each(row, function(d, j) {
+            td = document.createElement('td');
+            td.textContent = d;
 
             tr.appendChild(td);
-        }
+        });
 
         tbody.appendChild(tr);
     });
 
     result.appendChild(tbody);
-
-    result.setAttribute("data-numrows", rowKeys.length);
-    result.setAttribute("data-numcols", colKeys.length);
 
     return result;
 }
@@ -93,25 +69,13 @@ function previewRenderer(pivotData, opts) {
  * pivottable TSV renderer customized for Atlas.
  */
 function atlasTSVRenderer(pivotData, opts) {
-	var opts = $.extend(true, {}, opts)
-
-	var rowKeys = pivotData.getRowKeys();
-
-	if (rowKeys.length == 0) {
-		rowKeys.push([]);
-	}
-
 	var colKeys = pivotData.getColKeys();
 
 	if (colKeys.length == 0) {
 		colKeys.push([]);
 	}
 
-	var rowAttrs = pivotData.rowAttrs;
-	var colAttrs = pivotData.colAttrs;
-
 	var header = [];
-	var rows = [];
 
 	_.each(rowAttrs, function(rowAttr) {
 		header.push(rowAttr);
@@ -125,36 +89,7 @@ function atlasTSVRenderer(pivotData, opts) {
 		});
 	}
 
-	_.each(rowKeys, function(rowKey) {
-		var row = [];
-
-		_.each(rowKey, function(r) {
-			row.push(r);
-		});
-
-		_.each(colKeys, function(colKey) {
-			var agg = pivotData.getAggregator(rowKey, colKey);
-			var value = agg.value();
-
-			if (value) {
-				row.push(agg.format(value));
-			} else {
-				row.push('null');
-			}
-		})
-
-		rows.push(row);
-	});
-
-	if (sortOrder == 'rowAsc') {
-		rows.sort(columnSorter(0, false));
-	} else if (sortOrder == 'rowDesc') {
-		rows.sort(columnSorter(0, true));
-	} else if (sortOrder == 'valueAsc') {
-		rows.sort(columnSorter(1, false));
-	} else if (sortOrder == 'valueDesc') {
-		rows.sort(columnSorter(1, true));
-	}
+    var rows = getSortedRows(pivotData, opts.sortOrder);
 
 	var text = header.join('\t') + '\n';
 
@@ -166,9 +101,59 @@ function atlasTSVRenderer(pivotData, opts) {
 }
 
 /*
+ * Convert pivotData to a sorted list of row data.
+ */
+function getSortedRows(pivotData, sortOrder) {
+    var rows = [];
+    var rowKeys = pivotData.getRowKeys();
+    var colKeys = pivotData.getColKeys();
+
+    if (rowKeys.length == 0) {
+		rowKeys.push([]);
+	}
+
+    if (colKeys.length == 0) {
+		colKeys.push([]);
+	}
+
+    _.each(rowKeys, function(rowKey) {
+        var row = [];
+
+        _.each(rowKey, function(r) {
+            row.push(r);
+        });
+
+        _.each(colKeys, function(colKey) {
+            var agg = pivotData.getAggregator(rowKey, colKey);
+            var value = agg.value();
+
+            if (value) {
+                row.push(agg.format(value));
+            } else {
+                row.push('null');
+            }
+        })
+
+        rows.push(row);
+    });
+
+    if (sortOrder == 'rowAsc') {
+        rows.sort(columnSorter(0, false));
+    } else if (sortOrder == 'rowDesc') {
+        rows.sort(columnSorter(0, true));
+    } else if (sortOrder == 'valueAsc') {
+        rows.sort(columnSorter(1, false));
+    } else if (sortOrder == 'valueDesc') {
+        rows.sort(columnSorter(1, true));
+    }
+
+    return rows;
+}
+
+/*
  * Compare function for table data.
  */
-var columnSorter = function(columnIndex, reverse) {
+function columnSorter(columnIndex, reverse) {
 	return function(a, b) {
 		if (a[columnIndex] < b[columnIndex]) {
 			return reverse ? 1 : -1;

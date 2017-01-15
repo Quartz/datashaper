@@ -240,21 +240,9 @@ function onDivideSelectChange(e) {
  */
 function onDecimalSelectChange(e) {
 	decimalPrec = parseInt($decimalSelect.val());
-	console.log(decimalPrec);
 
 	pivot(false);
 }
-
-/*
- * Quickly format a number for display.
- */
-// function numberFormat(n) {
-// 	if (isNaN(n) || !isFinite(n)) {
-// 		return '';
-// 	}
-//
-// 	return (n / divideBy).toFixed(decimalPrec);
-// }
 
 /*
  * Execute pivot.
@@ -264,7 +252,7 @@ function pivot(toClipboard) {
 	var precFormat = numberFormat({
 		scaler: 1 / divideBy,
 		digitsAfterDecimal: decimalPrec,
-		showZero: true
+		thousandsSep: toClipboard ? '' : ','
 	});
 
 	var aggregator = $.pivotUtilities.aggregatorTemplates[agg](precFormat)([valueColumn]);
@@ -273,7 +261,11 @@ function pivot(toClipboard) {
 		rows: [labelColumn],
 		cols: categoryColumn ? [categoryColumn] : [],
 		aggregator: aggregator,
-		renderer: renderers.previewRenderer
+		renderer: renderers.previewRenderer,
+		rendererOptions: {
+			'valueColumn': valueColumn,
+			'sortOrder': sortOrder
+		}
 	}
 
 	if (toClipboard) {

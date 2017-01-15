@@ -1,5 +1,6 @@
 // NPM modules
 var _ = require('lodash');
+var renderers = require('./renderers');
 
 var $html = null;
 var $body = null;
@@ -59,6 +60,8 @@ function init() {
 	$decimalSelect = $('#options select#decimal')
 
 	$outputSection = $('#output')
+
+	$preview = $('#preview')
 	$pivottable = $('#pivottable');
 
 	$html.on('dragover', onDrag);
@@ -164,7 +167,7 @@ function onParsed(parseResult) {
 	$columnSection.show();
 	$aggSection.show();
 	$optionsSection.show();
-	$outputSection.show();
+	$preview.show();
 }
 
 /*
@@ -202,7 +205,7 @@ function onColumnUseChange(e) {
 		}
 	});
 
-	pivot();
+	pivot(false);
 }
 
 /*
@@ -211,7 +214,7 @@ function onColumnUseChange(e) {
 function onAggSelectChange(e) {
 	agg = $aggSelect.val();
 
-	pivot();
+	pivot(false);
 }
 
 /*
@@ -220,7 +223,7 @@ function onAggSelectChange(e) {
 function onSortSelectChange(e) {
 	sortOrder = $sortSelect.val();
 
-	pivot();
+	pivot(false);
 }
 
 /*
@@ -229,7 +232,7 @@ function onSortSelectChange(e) {
 function onDivideSelectChange(e) {
 	divideBy = parseInt($divideSelect.val());
 
-	pivot();
+	pivot(false);
 }
 
 /*
@@ -239,7 +242,7 @@ function onDecimalSelectChange(e) {
 	decimalPrec = parseInt($decimalSelect.val());
 	console.log(decimalPrec);
 
-	pivot();
+	pivot(false);
 }
 
 /*
@@ -256,7 +259,7 @@ function onDecimalSelectChange(e) {
 /*
  * Execute pivot.
  */
-function pivot() {
+function pivot(toClipboard) {
 	var numberFormat = $.pivotUtilities.numberFormat;
 	var precFormat = numberFormat({
 		scaler: 1 / divideBy,
@@ -270,98 +273,17 @@ function pivot() {
 		rows: [labelColumn],
 		cols: categoryColumn ? [categoryColumn] : [],
 		aggregator: aggregator,
-		renderer: atlasTSVRenderer
+		renderer: renderers.previewRenderer
+	}
+
+	if (toClipboard) {
+		// TODO
+		pivotOptions['renderer'] = renderers.atlasTSVRenderer
+
+		return;
 	}
 
 	$($pivottable).pivot(tableData, pivotOptions);
-}
-
-/*
- * pivottable TSV renderer customized for Atlas.
- */
-function atlasTSVRenderer(pivotData, opts) {
-	var opts = $.extend(true, {}, opts)
-
-	var rowKeys = pivotData.getRowKeys();
-
-	if (rowKeys.length == 0) {
-		rowKeys.push([]);
-	}
-
-	var colKeys = pivotData.getColKeys();
-
-	if (colKeys.length == 0) {
-		colKeys.push([]);
-	}
-
-	var rowAttrs = pivotData.rowAttrs;
-	var colAttrs = pivotData.colAttrs;
-
-	var header = [];
-	var rows = [];
-
-	_.each(rowAttrs, function(rowAttr) {
-		header.push(rowAttr);
-	});
-
-	if (colKeys.length == 1 && colKeys[0].length == 0) {
-		header.push(pivotData.aggregatorName);
-	} else {
-		_.each(colKeys, function(colKey) {
-			header.push(colKey.join("-"));
-		});
-	}
-
-	_.each(rowKeys, function(rowKey) {
-		var row = [];
-
-		_.each(rowKey, function(r) {
-			row.push(r);
-		});
-
-		_.each(colKeys, function(colKey) {
-			var agg = pivotData.getAggregator(rowKey, colKey);
-			var value = agg.value();
-
-			if (value) {
-				row.push(agg.format(value));
-			} else {
-				row.push('null');
-			}
-		})
-
-		rows.push(row);
-	});
-
-	if (sortOrder == 'rowAsc') {
-		rows.sort(columnSorter(0, false));
-	} else if (sortOrder == 'rowDesc') {
-		rows.sort(columnSorter(0, true));
-	} else if (sortOrder == 'valueAsc') {
-		rows.sort(columnSorter(1, false));
-	} else if (sortOrder == 'valueDesc') {
-		rows.sort(columnSorter(1, true));
-	}
-
-	var text = header.join('\t') + '\n';
-
-	_.each(rows, function(row) {
-		text += row.join('\t') + '\n';
-	});
-
-	return $("<textarea>").text(text);
-}
-
-var columnSorter = function(columnIndex, reverse) {
-	return function(a, b) {
-		if (a[columnIndex] < b[columnIndex]) {
-			return reverse ? 1 : -1;
-		} else if (a[columnIndex] > b[columnIndex]) {
-			return reverse ? -1 : 1;
-		}
-
-		return 0;
-	}
 }
 
 // Bind on-load handler

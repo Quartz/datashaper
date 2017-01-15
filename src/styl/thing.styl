@@ -1,5 +1,3 @@
-$width = 800px
-
 body
     padding 10px
     border 5px dotted
@@ -21,18 +19,22 @@ body
         margin-bottom 0
 
     p
-        width $width
-
         .hint
             font-size 0.8em
 
 .section
     display none
-    margin-top 30px
+    width 40%
+    margin-top 20px
+
+#intro
+    display block
+    margin-top 5px
 
 #upload
     input
         margin-top 10px
+        padding-bottom 16px     // Match <p>
 
 #columns
     th
@@ -49,7 +51,14 @@ body
     .option
         margin-bottom 10px
 
-#pivottable
-    textarea
-        width $width
-        height 400px
+#preview
+    display: none
+    width: 55%
+    position: fixed
+    left: 45%
+    top: 10px
+
+    // #pivottable
+    //     textarea
+    //         width 90%
+    //         height 400px

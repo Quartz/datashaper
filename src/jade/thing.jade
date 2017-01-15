@@ -1,6 +1,7 @@
-h1 Datashaper
+div#intro.section
+    h1 Datashaper
 
-p This tool reformats a CSV dataset so it will display well in <a href="https://www.theatlas.com/">Atlas</a>. If you are familiar with "pivot tables" in Excel or Google Spreadsheets, the functionality is very similar.
+    p This tool reformats a CSV dataset so it will display well in <a href="https://www.theatlas.com/">Atlas</a>. If you are familiar with "pivot tables" in Excel or Google Spreadsheets, the functionality is very similar.
 
 div#upload.section
     h2 Upload a file
@@ -74,8 +75,12 @@ div#options.section
                 option(value="2", selected="selected") 2
                 option(value="3") 3
 
-div#output.section
-    h2 Your data is now ready for Atlas
+//- div#output.section
+//-     h2 Your data is now ready for Atlas
+//- 
+//-     //- div#pivottable
+        
+div#preview
+    h2 Preview
 
     div#pivottable
-        

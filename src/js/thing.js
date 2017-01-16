@@ -19,7 +19,7 @@ var $pivottable = null;
 
 var columnTemplate = _.template('\
 		<tr class="column">\
-				<td><%= columnName %></td>\
+				<td class="name"><%= columnName %></td>\
 				<td><input type="radio" name="><%= columnName %>" value="labels" /></td>\
 				<td><input type="radio" name="><%= columnName %>" value="categories" /></td>\
 				<td><input type="radio" name="><%= columnName %>" value="values" /></td>\

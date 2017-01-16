@@ -37,17 +37,22 @@ body
 
 #columns
     table
+        width: 100%
+        
         th
             text-align left
             vertical-align top
             border-bottom 1px solid $qz-gray-1
 
-            .subhead
-                color $qz-gray-2
+            &:first-child
+                border-bottom none
 
         th, td
             padding 5px 15px 5px 5px
             text-align center
+
+            &.name
+                font-family monospace
 
         tr th:first-child, tr td:first-child
             text-align left

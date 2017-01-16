@@ -1,5 +1,6 @@
 // NPM modules
 var _ = require('lodash');
+var Clipboard = require('clipboard');
 var renderers = require('./renderers');
 
 var $html = null;
@@ -14,8 +15,9 @@ var $optionsSection = null;
 var $sortSelect = null;
 var $divideSelect = null;
 var $decimalSelect = null;
-var $outputSection = null;
+var $preview = null;
 var $pivottable = null;
+var $copytable = null;
 
 var columnTemplate = _.template('\
 		<tr class="column">\
@@ -63,6 +65,7 @@ function init() {
 
 	$preview = $('#preview')
 	$pivottable = $('#pivottable');
+	$copytable = $('#copytable');
 
 	$html.on('dragover', onDrag);
 	$html.on('dragend', onDragEnd);
@@ -74,6 +77,20 @@ function init() {
 	$sortSelect.bind('change', onSortSelectChange);
 	$divideSelect.bind('change', onDivideSelectChange);
 	$decimalSelect.bind('change', onDecimalSelectChange);
+
+	var clipboard = new Clipboard('#copy', {
+		text: function(trigger) {
+			return pivot(true);
+		}
+	});
+
+	clipboard.on('success', function(e) {
+		alert('Copied!');
+	});
+
+	clipboard.on('error', function(e) {
+		alert('Error copying!');
+	});
 
 	$uploadSection.show();
 }
@@ -248,11 +265,21 @@ function onDecimalSelectChange(e) {
  * Execute pivot.
  */
 function pivot(toClipboard) {
+	var thousandsSep =  ',';
+	var renderer = renderers.previewRenderer;
+	var $el = $pivottable;
+
+	if (toClipboard) {
+		thousandsSep = '';
+		renderer = renderers.atlasTSVRenderer;
+		$el = $copytable;
+	}
+
 	var numberFormat = $.pivotUtilities.numberFormat;
 	var precFormat = numberFormat({
 		scaler: 1 / divideBy,
 		digitsAfterDecimal: decimalPrec,
-		thousandsSep: toClipboard ? '' : ','
+		thousandsSep: thousandsSep
 	});
 
 	var aggregator = $.pivotUtilities.aggregatorTemplates[agg](precFormat)([valueColumn]);
@@ -261,21 +288,18 @@ function pivot(toClipboard) {
 		rows: [labelColumn],
 		cols: categoryColumn ? [categoryColumn] : [],
 		aggregator: aggregator,
-		renderer: renderers.previewRenderer,
+		renderer: renderer,
 		rendererOptions: {
 			'valueColumn': valueColumn,
 			'sortOrder': sortOrder
 		}
 	}
 
+	$el.pivot(tableData, pivotOptions);
+
 	if (toClipboard) {
-		// TODO
-		pivotOptions['renderer'] = renderers.atlasTSVRenderer
-
-		return;
+		return $el.find('textarea').val();
 	}
-
-	$($pivottable).pivot(tableData, pivotOptions);
 }
 
 // Bind on-load handler

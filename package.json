@@ -13,6 +13,7 @@
     "url": "https://github.com/Quartz/atlas-shaper"
   },
   "dependencies": {
+    "clipboard": "^1.5.16",
     "lodash": "^4.17.4",
     "pivottable": "^2.7.0"
   },

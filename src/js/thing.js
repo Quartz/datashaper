@@ -9,6 +9,7 @@ var $uploadSection = null;
 var $csvInput = null;
 var $columnSection = null;
 var $columns = null;
+var $columnWarnings = null;
 var $aggSection = null;
 var $aggSelect = null;
 var $optionsSection = null;
@@ -52,6 +53,7 @@ function init() {
 
 	$columnSection = $('#columns');
 	$columns = $('#columns tbody');
+	$columnWarnings = $('#columns .warnings')
 
 	$aggSection = $('#aggregation');
 	$aggSelect = $('#aggregation select');
@@ -195,19 +197,21 @@ function onColumnUseChange(e) {
 	categoryColumn = null;
 	valueColumn = null;
 
+	$columnWarnings.empty();
+
 	_.each(columnNames, function(columnName, i) {
 		var use = $columns.find('input:checked').eq(i).val();
 
 		if (use == 'labels') {
 			if (labelColumn) {
-				alert('You may only have one label column!')
+				$columnWarnings.append($('<p>🚨 You may only have one label column! 🚨</p>'));
 				return;
 			}
 
 			labelColumn = columnName;
 		} else if (use == 'categories') {
 			if (categoryColumn) {
-				alert('You may only have one category column!')
+				$columnWarnings.append($('<p>🚨 You may only have one category column!</p> 🚨'));
 				return;
 			}
 
@@ -215,7 +219,7 @@ function onColumnUseChange(e) {
 		} else if (use == 'values') {
 
 			if (valueColumn) {
-				alert('You may only have one value column!')
+				$columnWarnings.append($('<p>🚨 You may only have one value column!</p> 🚨'));
 				return;
 			}
 			valueColumn = columnName;

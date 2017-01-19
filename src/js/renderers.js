@@ -121,11 +121,8 @@ function getSortedRows(pivotData, sortOrder) {
 	}
 
     _.each(rowKeys, function(rowKey) {
-        var row = [];
-
-        _.each(rowKey, function(r) {
-            row.push(r);
-        });
+        // NB: Only a single row-key is supported.
+        var row = [rowKey[0]];
 
         _.each(colKeys, function(colKey) {
             var agg = pivotData.getAggregator(rowKey, colKey);

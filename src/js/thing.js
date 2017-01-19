@@ -226,8 +226,14 @@ function onColumnUseChange(e) {
 		}
 	});
 
+	if (labelColumn === null) {
+		$columnWarnings.append($('<p>🚨 You must select a "Rows" column! 🚨</p>'));
+		return;
+	}
+
 	if (valueColumns.length == 0) {
-		$columnWarnings.append($('<p>🚨 You must select at least one "Values" column! 🚨</p>'))
+		$columnWarnings.append($('<p>🚨 You must select at least one "Values" column! 🚨</p>'));
+		return;
 	}
 
 	if (valueColumns.length > 1 && categoryColumn) {
@@ -345,8 +351,10 @@ function pivot(toClipboard) {
 	var aggregator = $.pivotUtilities.aggregatorTemplates[agg](precFormat)([valueColumns[0]]);
 
 	if (aggregationRequired) {
+		log('Using pivottable pivot implementation.');
+
 		var pivotOptions = {
-			rows: [labelColumn],
+			rows: labelColumn ? [labelColumn] : null,
 			cols: categoryColumn ? [categoryColumn] : [],
 			aggregator: aggregator,
 			renderer: renderer,
@@ -356,14 +364,29 @@ function pivot(toClipboard) {
 			}
 		}
 
+		log('pivotOptions:');
+		log(pivotOptions);
+
 		$el.pivot(tableData, pivotOptions);
 	} else {
+		log('Using mocked pivot implementation.');
+
 		var labelColumnIndex = columnNames.indexOf(labelColumn);
+		var rowAttrs = [labelColumn];
+		var colAttrs = valueColumns;
 		var rowKeys = _.map(_.map(tableData, labelColumnIndex), function(d) {
 			return [d];
 		}).slice(1);
 		var colKeys = _.map(valueColumns, function(d) {
 			return [d];
+		});
+
+		log('renderOptions');
+		log({
+			'rowAttrs': rowAttrs,
+			'colAttrs': colAttrs,
+			'rowKeys': rowKeys,
+			'colKeys': colKeys
 		});
 
 		// This rather horrifying hack bypasses the pivot method by passing
@@ -394,6 +417,10 @@ function pivot(toClipboard) {
 	if (toClipboard) {
 		return $el.find('textarea').val();
 	}
+}
+
+function log(msg) {
+	console.log(msg);
 }
 
 // Bind on-load handler

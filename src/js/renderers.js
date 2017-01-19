@@ -9,7 +9,6 @@ function previewRenderer(pivotData, opts) {
 
     colAttrs = pivotData.colAttrs;
     rowAttrs = pivotData.rowAttrs;
-    rowKeys = pivotData.getRowKeys();
     colKeys = pivotData.getColKeys();
 
     result = document.createElement("table");
@@ -20,6 +19,9 @@ function previewRenderer(pivotData, opts) {
     th = document.createElement("th");
     th.textContent = rowAttrs[0] || '';
     tr.appendChild(th);
+
+    console.log(colAttrs);
+    console.log(colKeys);
 
     // Category column headers
     if (colAttrs.length > 0) {

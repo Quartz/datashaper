@@ -33,6 +33,8 @@ var columnTemplate = _.template('\
 var tableData = null;
 var columnNames = null;
 var columnUses = null;
+var columnUniques = null;
+var aggregationRequired = null;
 var labelColumn = null;
 var categoryColumn = null;
 var valueColumn = null;
@@ -159,6 +161,7 @@ function parse(f) {
 function onParsed(parseResult) {
 	tableData = parseResult.data;
 	columnNames = tableData[0];
+	columnUniques = new Array(columnNames.length);
 
 	_.each(columnNames, function(columnName, i) {
 		var column = columnTemplate({
@@ -184,7 +187,6 @@ function onParsed(parseResult) {
 	onColumnUseChange();
 
 	$columnSection.show();
-	$aggSection.show();
 	$optionsSection.show();
 	$preview.show();
 }
@@ -226,7 +228,43 @@ function onColumnUseChange(e) {
 		}
 	});
 
+	aggregationRequired = false;
+
+	if (categoryColumn && labelColumn) {
+		aggregationRequired = true;
+	} else if (categoryColumn && !isColumnUnique(categoryColumn)) {
+		aggregationRequired = true;
+	} else if (labelColumn && !isColumnUnique(labelColumn)) {
+		aggregationRequired = true;
+	}
+
+	if (aggregationRequired) {
+		$aggSection.show();
+	} else {
+		$aggSection.hide();
+	}
+
 	pivot(false);
+}
+
+/*
+ * Determine if a column is unique.
+ */
+function isColumnUnique(columnName) {
+	var columnIndex = columnNames.indexOf(columnName);
+	var uniques = new Set();
+
+	if (columnUniques[columnIndex] !== undefined) {
+		uniques = columnUniques[columnIndex];
+	} else {
+		for (var i = 1; i < tableData.length; i++) {
+			uniques.add(tableData[i][columnIndex]);
+		}
+
+		columnUniques[columnIndex] = uniques;
+	}
+
+	return uniques.size === (tableData.length - 1);
 }
 
 /*
@@ -288,18 +326,49 @@ function pivot(toClipboard) {
 
 	var aggregator = $.pivotUtilities.aggregatorTemplates[agg](precFormat)([valueColumn]);
 
-	var pivotOptions = {
-		rows: [labelColumn],
-		cols: categoryColumn ? [categoryColumn] : [],
-		aggregator: aggregator,
-		renderer: renderer,
-		rendererOptions: {
-			'valueColumn': valueColumn,
-			'sortOrder': sortOrder
+	if (aggregationRequired) {
+		var pivotOptions = {
+			rows: [labelColumn],
+			cols: categoryColumn ? [categoryColumn] : [],
+			aggregator: aggregator,
+			renderer: renderer,
+			rendererOptions: {
+				'valueColumn': valueColumn,
+				'sortOrder': sortOrder
+			}
 		}
-	}
 
-	$el.pivot(tableData, pivotOptions);
+		$el.pivot(tableData, pivotOptions);
+	} else {
+		var labelColumnIndex = columnNames.indexOf(labelColumn);
+		var rowKeys = _.map(_.map(tableData, labelColumnIndex), function(d) {
+			return [d];
+		}).slice(1);
+
+		// This rather horrifying hack bypasses the pivot method by passing
+		// a mocked data structure directly to the renderer.
+		$el.html(renderer({
+			rowAttrs: [labelColumn],
+			colAttrs: [valueColumn],
+			getRowKeys: function() {
+				return rowKeys;
+			},
+			getColKeys: function() {
+				return [[valueColumn]];
+			},
+			getAggregator: function(rowKey, colKey) {
+				var rowIndex = rowKeys.indexOf(rowKey);
+				var columnIndex = columnNames.indexOf(colKey[0]);
+
+				return {
+					value: function() {
+						return tableData[rowIndex + 1][columnIndex];
+					},
+					format: precFormat
+				}
+			}
+		}));
+	}
 
 	if (toClipboard) {
 		return $el.find('textarea').val();

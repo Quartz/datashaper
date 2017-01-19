@@ -1,12 +1,12 @@
 div#intro.section
     h1 📈 Datashaper
 
-    p This tool reformats a CSV dataset so it will display well in <a href="https://www.theatlas.com/">Atlas</a>. If you are familiar with "pivot tables" in Excel or Google Spreadsheets, the functionality is very similar.
+    p This tool reformats a CSV dataset so it will display well in <a href="https://www.theatlas.com/">Atlas</a>. If you are familiar with "pivot tables" in Excel or Google Spreadsheets, the functionality is similar.
 
 div#upload.section
-    h2 Upload a file
+    h2 Upload a CSV file
 
-    p Select a file to upload, or drag and drop a file onto this window. Your file must have a header row!
+    p Select a file to upload, or drag and drop a file onto this window. Your CSV must have a header row!
     
     input(type="file")
 
@@ -31,9 +31,9 @@ div#columns.section
 div#aggregation.section
     h2 Decide how to aggregate values
     
-    p If you're column contains more than one row or column with the same "name", then the values from the corresponding cells will need to be summarized in your output table. 
+    p.reason
     
-    p If you aren't sure what to pick, you probably want to <strong>add values</strong>.
+    p If you aren't sure what to pick, you probably want to choose <strong>add values</strong>.
     
     label Choose a method:
         select

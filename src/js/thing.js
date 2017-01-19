@@ -11,6 +11,7 @@ var $columnSection = null;
 var $columns = null;
 var $columnWarnings = null;
 var $aggSection = null;
+var $aggReason = null;
 var $aggSelect = null;
 var $optionsSection = null;
 var $sortSelect = null;
@@ -35,6 +36,7 @@ var columnNames = null;
 var columnUses = null;
 var columnUniques = null;
 var aggregationRequired = null;
+var aggregationReason = null;
 var labelColumn = null;
 var categoryColumn = null;
 var valueColumns = [];
@@ -58,6 +60,7 @@ function init() {
 	$columnWarnings = $('#columns .warnings')
 
 	$aggSection = $('#aggregation');
+	$aggReason = $('#aggregation .reason');
 	$aggSelect = $('#aggregation select');
 
 	$optionsSection = $('#options');
@@ -206,14 +209,14 @@ function onColumnUseChange(e) {
 
 		if (use == 'labels') {
 			if (labelColumn) {
-				$columnWarnings.append($('<p>🚨 You may only have one "rows" column! 🚨</p>'));
+				$columnWarnings.append($('<p>🚨 You may only have one "Rows"! 🚨</p>'));
 				return;
 			}
 
 			labelColumn = columnName;
 		} else if (use == 'categories') {
 			if (categoryColumn) {
-				$columnWarnings.append($('<p>🚨 You may only have one "columns" column! 🚨</p>'));
+				$columnWarnings.append($('<p>🚨 You may only have one "Columns"! 🚨</p>'));
 				return;
 			}
 
@@ -223,8 +226,12 @@ function onColumnUseChange(e) {
 		}
 	});
 
+	if (valueColumns.length == 0) {
+		$columnWarnings.append($('<p>🚨 You must select at least one "Values" column! 🚨</p>'))
+	}
+
 	if (valueColumns.length > 1 && categoryColumn) {
-		$columnWarnings.append($('<p>🚨 You may not have multiple "value" columns AND a "category" column. 🚨</p>'));
+		$columnWarnings.append($('<p>🚨 You may not select multiple "Values" and "Columns" at the same time! 🚨</p>'));
 		return;
 	}
 
@@ -232,13 +239,17 @@ function onColumnUseChange(e) {
 
 	if (categoryColumn && labelColumn) {
 		aggregationRequired = true;
+		aggregationReason = 'Because you selected both "Rows" and "Columns", you will need to decide how to summarize your your values.';
 	} else if (categoryColumn && !isColumnUnique(categoryColumn)) {
 		aggregationRequired = true;
+		aggregationReason = 'Because the "Columns" you selected contains repeating values, you will need to decide how to summarize them.';
 	} else if (labelColumn && !isColumnUnique(labelColumn)) {
 		aggregationRequired = true;
+		aggregationReason = 'Because the "Rows" you selected contains repeating values, you will need to decide how to summarize them.';
 	}
 
 	if (aggregationRequired) {
+		$aggReason.text(aggregationReason);
 		$aggSection.show();
 	} else {
 		$aggSection.hide();

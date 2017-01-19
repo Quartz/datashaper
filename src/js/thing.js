@@ -255,6 +255,13 @@ function onColumnUseChange(e) {
 		$aggSection.hide();
 	}
 
+	// Unique category columns (transposition)
+	if (categoryColumn && isColumnUnique(categoryColumn)) {
+		// Bypass user aggregation selection and just use first value
+		aggregationRequired = true;
+		agg = 'first';
+	}
+
 	pivot(false);
 }
 

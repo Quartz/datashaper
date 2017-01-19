@@ -7,6 +7,7 @@ var $html = null;
 var $body = null;
 var $uploadSection = null;
 var $csvInput = null;
+var $pasteInput = null;
 var $columnSection = null;
 var $columns = null;
 var $columnWarnings = null;
@@ -54,6 +55,7 @@ function init() {
 
 	$uploadSection = $('#upload');
 	$csvInput = $('#upload input');
+	$pasteInput = $('#upload textarea');
 
 	$columnSection = $('#columns');
 	$columns = $('#columns tbody');
@@ -80,6 +82,7 @@ function init() {
 	$html.on('dragleave', onDragEnd);
 	$html.on('drop', onDrop);
 	$csvInput.bind('change', onCSVChange);
+	$pasteInput.on('input onpropertychange', onPasteChange);
 	$aggSelect.bind('change', onAggSelectChange);
 	$sortSelect.bind('change', onSortSelectChange);
 	$divideSelect.bind('change', onDivideSelectChange);
@@ -106,7 +109,15 @@ function init() {
  * When CSV file input changes.
  */
 function onCSVChange(e) {
+	$pasteInput.val('');
 	parse(e.target.files[0]);
+}
+
+/*
+ * When paste field changes.
+ */
+function onPasteChange(e) {
+	parse($(this).val());
 }
 
 /*
@@ -210,14 +221,12 @@ function onColumnUseChange(e) {
 		if (use == 'labels') {
 			if (labelColumn) {
 				$columnWarnings.append($('<p>🚨 You may only have one "Rows"! 🚨</p>'));
-				return;
 			}
 
 			labelColumn = columnName;
 		} else if (use == 'categories') {
 			if (categoryColumn) {
 				$columnWarnings.append($('<p>🚨 You may only have one "Columns"! 🚨</p>'));
-				return;
 			}
 
 			categoryColumn = columnName;

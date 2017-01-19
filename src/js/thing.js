@@ -37,7 +37,7 @@ var columnUniques = null;
 var aggregationRequired = null;
 var labelColumn = null;
 var categoryColumn = null;
-var valueColumn = null;
+var valueColumns = [];
 var agg = 'sum';
 var sortOrder = 'rowAsc';
 var divideBy = 1;
@@ -197,7 +197,7 @@ function onParsed(parseResult) {
 function onColumnUseChange(e) {
 	labelColumn = null;
 	categoryColumn = null;
-	valueColumn = null;
+	valueColumns = [];
 
 	$columnWarnings.empty();
 
@@ -206,27 +206,27 @@ function onColumnUseChange(e) {
 
 		if (use == 'labels') {
 			if (labelColumn) {
-				$columnWarnings.append($('<p>🚨 You may only have one label column! 🚨</p>'));
+				$columnWarnings.append($('<p>🚨 You may only have one "rows" column! 🚨</p>'));
 				return;
 			}
 
 			labelColumn = columnName;
 		} else if (use == 'categories') {
 			if (categoryColumn) {
-				$columnWarnings.append($('<p>🚨 You may only have one category column!</p> 🚨'));
+				$columnWarnings.append($('<p>🚨 You may only have one "columns" column! 🚨</p>'));
 				return;
 			}
 
 			categoryColumn = columnName;
 		} else if (use == 'values') {
-
-			if (valueColumn) {
-				$columnWarnings.append($('<p>🚨 You may only have one value column!</p> 🚨'));
-				return;
-			}
-			valueColumn = columnName;
+			valueColumns.push(columnName);
 		}
 	});
+
+	if (valueColumns.length > 1 && categoryColumn) {
+		$columnWarnings.append($('<p>🚨 You may not have multiple "value" columns AND a "category" column. 🚨</p>'));
+		return;
+	}
 
 	aggregationRequired = false;
 
@@ -324,7 +324,7 @@ function pivot(toClipboard) {
 		thousandsSep: thousandsSep
 	});
 
-	var aggregator = $.pivotUtilities.aggregatorTemplates[agg](precFormat)([valueColumn]);
+	var aggregator = $.pivotUtilities.aggregatorTemplates[agg](precFormat)([valueColumns[0]]);
 
 	if (aggregationRequired) {
 		var pivotOptions = {
@@ -333,7 +333,7 @@ function pivot(toClipboard) {
 			aggregator: aggregator,
 			renderer: renderer,
 			rendererOptions: {
-				'valueColumn': valueColumn,
+				'valueColumn': valueColumns[0],
 				'sortOrder': sortOrder
 			}
 		}
@@ -344,17 +344,20 @@ function pivot(toClipboard) {
 		var rowKeys = _.map(_.map(tableData, labelColumnIndex), function(d) {
 			return [d];
 		}).slice(1);
+		var colKeys = _.map(valueColumns, function(d) {
+			return [d];
+		});
 
 		// This rather horrifying hack bypasses the pivot method by passing
 		// a mocked data structure directly to the renderer.
 		$el.html(renderer({
 			rowAttrs: [labelColumn],
-			colAttrs: [valueColumn],
+			colAttrs: valueColumns,
 			getRowKeys: function() {
 				return rowKeys;
 			},
 			getColKeys: function() {
-				return [[valueColumn]];
+				return colKeys;
 			},
 			getAggregator: function(rowKey, colKey) {
 				var rowIndex = rowKeys.indexOf(rowKey);

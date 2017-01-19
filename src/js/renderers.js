@@ -20,19 +20,15 @@ function previewRenderer(pivotData, opts) {
     th.textContent = rowAttrs[0] || '';
     tr.appendChild(th);
 
-    console.log(colAttrs);
-    console.log(colKeys);
-
     // Category column headers
     if (colAttrs.length > 0) {
-        _.each(colAttrs, function(c, j) {
-            _.each(colKeys, function(colKey, i) {
-                th = document.createElement("th");
-                th.textContent = colKey[j];
+        // NB: only a single column/category group is supported
+        _.each(colKeys, function(colKey, i) {
+            th = document.createElement("th");
+            th.textContent = colKey;
 
-                tr.appendChild(th);
-            })
-        });
+            tr.appendChild(th);
+        })
     // Value column header
     } else {
         th = document.createElement("th");

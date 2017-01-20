@@ -44,16 +44,29 @@ body
         height: 100px
 
 #columns
+    ul
+        margin-top 5px
+
+        li
+            font-size 18px
+            line-height 24px
+
+            strong.rows
+                background-color $rowColor
+
+            strong.columns
+                background-color $colColor
+
+            strong.values
+                background-color $valColor
+
     table
         width: 100%
 
         th
             text-align left
-            vertical-align top
+            vertical-align bottom
             border-bottom 1px solid $qz-gray-1
-
-            &:first-child
-                border-bottom none
 
         th, td
             padding 5px 15px 5px 5px
@@ -74,9 +87,6 @@ body
 
         tr th:first-child, tr td:first-child
             text-align left
-
-        tr td:first-child
-            border-right 1px solid $qz-gray-1
 
     .warnings
         margin-top 10px

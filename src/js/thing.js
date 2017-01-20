@@ -248,6 +248,8 @@ function onColumnUseChange(e) {
 	if (valueColumns.length > 1 && categoryColumn) {
 		$columnWarnings.append($('<p>🚨 You may not select multiple "Values" and "Columns" at the same time! 🚨</p>'));
 		return;
+	} else if (labelColumn && valueColumns.length > 1 && !isColumnUnique(labelColumn)) {
+		$columnWarnings.append($('<p>🚨 You may not select multiple "Values" if your "Rows" data are not unique. 🚨</p>'))
 	}
 
 	aggregationRequired = false;
@@ -306,6 +308,13 @@ function isColumnUnique(columnName) {
 function onAggSelectChange(e) {
 	agg = $aggSelect.val();
 
+	if (agg.startsWith('pct')) {
+		$divideSelect.val('1');
+		divideBy = 1;
+		$decimalSelect.val('1');
+		decimalPrec = 1;
+	}
+
 	pivot(false);
 }
 
@@ -357,7 +366,28 @@ function pivot(toClipboard) {
 		thousandsSep: thousandsSep
 	});
 
-	var aggregator = $.pivotUtilities.aggregatorTemplates[agg](precFormat)([valueColumns[0]]);
+	var aggregator = null;
+
+	if (agg.startsWith('pct')) {
+		var bits = agg.split('_');
+		var total = null;
+
+		if (bits[1] == 'sum') {
+			total = $.pivotUtilities.aggregatorTemplates.sum();
+		} else {
+			total = $.pivotUtilities.aggregatorTemplates.count();
+		}
+
+		var pctFormat = numberFormat({
+			digitsAfterDecimal: decimalPrec,
+			scaler: 100 * (1 / divideBy),
+			suffix: "%"
+		})
+
+		aggregator = $.pivotUtilities.aggregatorTemplates.fractionOf(total, bits[2], pctFormat)([valueColumns[0]]);
+	} else {
+		aggregator = $.pivotUtilities.aggregatorTemplates[agg](precFormat)([valueColumns[0]]);
+	}
 
 	if (aggregationRequired) {
 		log('Using pivottable pivot implementation.');

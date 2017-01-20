@@ -17,15 +17,20 @@ div#upload.section
 div#columns.section
     h2 Choose your columns
 
-    p Please select how each column should be used in your table.
+    p Datashaper transforms your source data into a new table. Please select how each column from your source should be used in the new table. You will see a preview of this table to the right. 👉🏽
+    
+    ul
+        li <strong class="rows">Rows</strong> appear down the left-hand side of the output table. These are the data "labels" in Atlas. (Country names, for example.)
+        li <strong class="columns">Columns</strong> appear across the top of the table. One output column will be created for each unique value in the source column. These are used, for example, when you have data by country that you want to display as multiple series on your Atlas chart.
+        li <strong class="values">Values</strong> are the actual numeric values to be charted.
     
     table
         thead
             tr
-                th &nbsp;
-                th Rows
-                th Columns
-                th Values
+                th CSV column
+                th Use as Rows
+                th Use as Columns
+                th Use as Values
                 th Ignore
         tbody
             form
@@ -49,6 +54,13 @@ div#aggregation.section
             option(value="max") Pick largest value
             option(value="first") Pick first value from the data
             option(value="last") Pick last value from the data
+            option(value="pct_sum_row") Add values and divide by row total (Percent)
+            option(value="pct_sum_col") Add values and divide by column total (Percent)
+            option(value="pct_sum_total") Add values and divide by table total (Percent)
+            option(value="pct_count_row") Count values and divide by row total (Percent)
+            option(value="pct_count_col") Count values and divide by column total (Percent)
+            option(value="pct_count_total") Count values and divide by table total (Percent)
+            
             
 div#options.section
     h2 Tweak as needed
@@ -58,8 +70,8 @@ div#options.section
     div.option
         label Sort table
             select#sort
-                option(value="rowAsc", selected="selected") Ascending by row names
-                option(value="rowDesc") Descending by row names
+                option(value="rowAsc", selected="selected") Ascending by rows
+                option(value="rowDesc") Descending by rows
                 option(value="valueAsc") Ascending by value
                 option(value="valueDesc") Descending by value
                 option(value="none") In the same order as the original data
@@ -80,6 +92,8 @@ div#options.section
                 option(value="1") 1
                 option(value="2", selected="selected") 2
                 option(value="3") 3
+                
+    p You're done! Use the pink "Copy as Atlas-ready TSV" button to copy the table to your clipboard. You can then paste it directly into Atlas.
         
 div#preview
     div.head

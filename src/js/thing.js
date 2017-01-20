@@ -25,9 +25,9 @@ var $copytable = null;
 var columnTemplate = _.template('\
 		<tr class="column">\
 				<td class="name"><%= columnName %></td>\
-				<td><input type="radio" name="><%= columnName %>" value="labels" /></td>\
-				<td><input type="radio" name="><%= columnName %>" value="categories" /></td>\
-				<td><input type="radio" name="><%= columnName %>" value="values" /></td>\
+				<td class="rows"><input type="radio" name="><%= columnName %>" value="labels" /></td>\
+				<td class="columns"><input type="radio" name="><%= columnName %>" value="categories" /></td>\
+				<td class="values"><input type="radio" name="><%= columnName %>" value="values" /></td>\
 				<td><input type="radio" name="><%= columnName %>" value="ignore" /></td>\
 		</tr>');
 
@@ -369,7 +369,8 @@ function pivot(toClipboard) {
 			renderer: renderer,
 			rendererOptions: {
 				'valueColumn': valueColumns[0],
-				'sortOrder': sortOrder
+				'sortOrder': sortOrder,
+				'valuesOnly': categoryColumn ? false : true
 			}
 		}
 
@@ -420,6 +421,8 @@ function pivot(toClipboard) {
 					format: precFormat
 				}
 			}
+		}, {
+			valuesOnly: true
 		}));
 	}
 

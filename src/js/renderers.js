@@ -17,6 +17,7 @@ function previewRenderer(pivotData, opts) {
 
     // Label column header
     th = document.createElement("th");
+    th.className = 'rows';
     th.textContent = rowAttrs[0] || '';
     tr.appendChild(th);
 
@@ -25,6 +26,7 @@ function previewRenderer(pivotData, opts) {
         // NB: only a single column/category group is supported
         _.each(colKeys, function(colKey, i) {
             th = document.createElement("th");
+            th.className = opts.valuesOnly ? 'values' : 'columns';
             th.textContent = colKey;
 
             tr.appendChild(th);
@@ -32,6 +34,7 @@ function previewRenderer(pivotData, opts) {
     // Value column header
     } else {
         th = document.createElement("th");
+        th.className = 'values';
         th.textContent = opts.valueColumn || '';
 
         tr.appendChild(th);
@@ -50,12 +53,15 @@ function previewRenderer(pivotData, opts) {
 
         _.each(row, function(d, j) {
             var elType = 'td';
+            var className = 'values';
 
             if (rowAttrs && j == 0) {
                 elType = 'th';
+                className = 'rows';
             }
 
             td = document.createElement(elType);
+            td.className = className;
             td.textContent = d;
 
             tr.appendChild(td);

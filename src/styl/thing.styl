@@ -1,3 +1,7 @@
+$rowColor = lighten($qz-ora-1, 50%)
+$colColor = lighten($qz-gre-1, 50%)
+$valColor = lighten($qz-blue-1, 50%)
+
 body
     padding 10px
     border 5px dotted
@@ -54,9 +58,19 @@ body
         th, td
             padding 5px 15px 5px 5px
             text-align center
+            width 15%
 
             &.name
-                font-weight bold
+                width 25%
+
+            &.rows
+                background-color $rowColor
+
+            &.columns
+                background-color $colColor
+
+            &.values
+                background-color $valColor
 
         tr th:first-child, tr td:first-child
             text-align left
@@ -112,13 +126,21 @@ body
         border-collapse collapse
 
         th
-            background-color $qz-map-land-fill
             font-weight bold
 
         th, td
             padding 5px
             border 1px solid $qz-gray-1
             text-align right
+
+            &.rows
+                background-color $rowColor
+
+            &.columns
+                background-color $colColor
+
+            &.values
+                background-color $valColor
 
     #copytable
         display none

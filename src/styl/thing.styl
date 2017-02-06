@@ -1,12 +1,21 @@
-$rowColor = lighten($qz-ora-1, 50%)
-$colColor = lighten($qz-gre-1, 50%)
-$valColor = lighten($qz-blue-1, 50%)
+$rowColor = lighten($qz-ora-1, 60%)
+$colColor = lighten($qz-gre-1, 60%)
+$valColor = lighten($qz-blue-1, 60%)
 
 body
     padding 10px
     border 5px dotted
     border-color $qz-background-gray
     height 100
+
+.rows
+    background-color $rowColor
+
+.columns
+    background-color $colColor
+
+.values
+    background-color $valColor
 
 .drop-border
     border-color lightgrey
@@ -43,6 +52,9 @@ body
         width 100%
         height: 100px
 
+    p code
+        background-color: lighten($qz-purp-1, 60%)
+
 #columns
     ul
         margin-top 5px
@@ -50,15 +62,6 @@ body
         li
             font-size 18px
             line-height 24px
-
-            strong.rows
-                background-color $rowColor
-
-            strong.columns
-                background-color $colColor
-
-            strong.values
-                background-color $valColor
 
     table
         width: 100%
@@ -76,15 +79,6 @@ body
             &.name
                 width 25%
 
-            &.rows
-                background-color $rowColor
-
-            &.columns
-                background-color $colColor
-
-            &.values
-                background-color $valColor
-
         tr th:first-child, tr td:first-child
             text-align left
 
@@ -94,6 +88,10 @@ body
         p
             color: $qz-error
             font-weight bold
+
+#aggregation
+    p.reason span
+        font-weight bold
 
 #options
     .option

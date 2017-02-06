@@ -1,12 +1,14 @@
 div#intro.section
     h1 📈 Datashaper
 
-    p This tool reformats a CSV dataset so it will display well in <a href="https://www.theatlas.com/">Atlas</a>. If you are familiar with "pivot tables" in Excel or Google Spreadsheets, the functionality is similar.
+    p This tool reformats a CSV dataset so it will display well in <a href="https://www.theatlas.com/">Atlas</a>. If you are familiar with "pivot tables" in Excel or Google Spreadsheets, this works in a similar way.
 
 div#upload.section
     h2 Upload a CSV file
 
-    p Select a file to upload. Your data must have a header row!
+    p Select a <code>.csv</code> file to upload. Your data must have a header row!
+    
+    p If you have an Excel file (<code>.xls</code> or <code>.xlsx</code>) you will first need to "Save As" and select "CSV" as the file type.
     
     input(type="file")
     
@@ -16,18 +18,20 @@ div#upload.section
 
 div#columns.section
     h2 Choose your columns
+    
+    p Your original table has <span class="column-count"></span> columns and <span class="row-count"></span> rows.
 
-    p Datashaper transforms your source data into a new table. Please select how each column from your source should be used in the new table. You will see a preview of this table to the right. 👉🏽
+    p Please select how each column from the original table should be displayed in the new table. You will see a preview of the new table to the right. 👉🏽
     
     ul
-        li <strong class="rows">Rows</strong> appear down the left-hand side of the output table. These are the data "labels" in Atlas. (Country names, for example.)
-        li <strong class="columns">Columns</strong> appear across the top of the table. One output column will be created for each unique value in the source column. These are used, for example, when you have data by country that you want to display as multiple series on your Atlas chart.
-        li <strong class="values">Values</strong> are the actual numeric values to be charted.
+        li <strong class="rows">Rows</strong> are the first column of the new table. These are used as the "labels" in Atlas. (Country names, for example.)
+        li <strong class="columns">Columns</strong> appear across the top of the table. One new column will be created for each unique value in the original column. Use this option when you want to display multiple data series on one Atlas chart.
+        li <strong class="values">Values</strong> are the numeric values that will be charted.
     
     table
         thead
             tr
-                th CSV column
+                th Original column
                 th Use as Rows
                 th Use as Columns
                 th Use as Values
@@ -48,18 +52,18 @@ div#aggregation.section
         select
             option(value="sum", selected="selected") Add values
             option(value="average") Average values
-            option(value="count") Count all values
-            option(value="countUnique") Count unique values
-            option(value="min") Pick smallest value
-            option(value="max") Pick largest value
-            option(value="first") Pick first value from the data
-            option(value="last") Pick last value from the data
-            option(value="pct_sum_row") Add values and divide by row total (Percent)
-            option(value="pct_sum_col") Add values and divide by column total (Percent)
-            option(value="pct_sum_total") Add values and divide by table total (Percent)
-            option(value="pct_count_row") Count values and divide by row total (Percent)
-            option(value="pct_count_col") Count values and divide by column total (Percent)
-            option(value="pct_count_total") Count values and divide by table total (Percent)
+            option(value="count") Count number of values
+            option(value="countUnique") Count number of unique values
+            option(value="min") Use smallest value
+            option(value="max") Use largest value
+            option(value="first") Use first value from the original data
+            option(value="last") Use last value from the original data
+            option(value="pct_sum_row") Add values and divide by row total (Percent of row total)
+            option(value="pct_sum_col") Add values and divide by column total (Percent of column total)
+            option(value="pct_sum_total") Add values and divide by table total (Percent of table total)
+            option(value="pct_count_row") Count values and divide by row total (Percent of row count)
+            option(value="pct_count_col") Count values and divide by column total (Percent of column count)
+            option(value="pct_count_total") Count values and divide by table total (Percent of table count)
             
             
 div#options.section

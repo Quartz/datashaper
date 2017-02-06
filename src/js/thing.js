@@ -9,6 +9,8 @@ var $uploadSection = null;
 var $csvInput = null;
 var $pasteInput = null;
 var $columnSection = null;
+var $columnCount = null;
+var $rowCount = null;
 var $columns = null;
 var $columnWarnings = null;
 var $aggSection = null;
@@ -58,6 +60,8 @@ function init() {
 	$pasteInput = $('#upload textarea');
 
 	$columnSection = $('#columns');
+	$columnCount = $('#columns .column-count');
+	$rowCount = $('#columns .row-count');
 	$columns = $('#columns tbody');
 	$columnWarnings = $('#columns .warnings')
 
@@ -109,8 +113,16 @@ function init() {
  * When CSV file input changes.
  */
 function onCSVChange(e) {
-	$pasteInput.val('');
-	parse(e.target.files[0]);
+	var reader = new FileReader();
+
+	reader.onload = (function(f) {
+		return function(e) {
+			$pasteInput.val(e.target.result);
+			$pasteInput.trigger('input');
+		}
+	})(e.target.files[0])
+
+	reader.readAsText(e.target.files[0]);
 }
 
 /*
@@ -164,7 +176,7 @@ function parse(f) {
 		skipEmptyLines: true,
 		complete: onParsed,
 		error: function(e) {
-			alert(e)
+			alert(e);
 		},
 	});
 }
@@ -176,6 +188,9 @@ function onParsed(parseResult) {
 	tableData = parseResult.data;
 	columnNames = tableData[0];
 	columnUniques = new Array(columnNames.length);
+
+	$columnCount.text(columnNames.length);
+	$rowCount.text(tableData.length - 1);
 
 	_.each(columnNames, function(columnName, i) {
 		var column = columnTemplate({
@@ -256,17 +271,17 @@ function onColumnUseChange(e) {
 
 	if (categoryColumn && labelColumn) {
 		aggregationRequired = true;
-		aggregationReason = 'Because you selected both "Rows" and "Columns", you will need to decide how to summarize your your values.';
+		aggregationReason = 'Because you selected both <span class="rows">Rows</span> and <span class="columns">Columns</span>, you will need to decide how to summarize them.';
 	} else if (categoryColumn && !isColumnUnique(categoryColumn)) {
 		aggregationRequired = true;
-		aggregationReason = 'Because the "Columns" you selected contains repeating values, you will need to decide how to summarize them.';
+		aggregationReason = 'Because the <span class="columns">Columns</span> you selected contains repeating values, you will need to decide how to summarize them.';
 	} else if (labelColumn && !isColumnUnique(labelColumn)) {
 		aggregationRequired = true;
-		aggregationReason = 'Because the "Rows" you selected contains repeating values, you will need to decide how to summarize them.';
+		aggregationReason = 'Because the <span class="rows">Rows</span> you selected contains repeating values, you will need to decide how to summarize them.';
 	}
 
 	if (aggregationRequired) {
-		$aggReason.text(aggregationReason);
+		$aggReason.html(aggregationReason);
 		$aggSection.show();
 	} else {
 		$aggSection.hide();

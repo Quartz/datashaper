@@ -10,8 +10,6 @@ var $csvInput = null;
 var $pasteInput = null;
 var $sampleLink = null;
 var $columnSection = null;
-var $columnCount = null;
-var $rowCount = null;
 var $columns = null;
 var $columnWarnings = null;
 var $aggSection = null;
@@ -25,14 +23,20 @@ var $preview = null;
 var $pivottable = null;
 var $copytable = null;
 
-var columnTemplate = _.template('\
-		<tr class="column">\
-				<td class="name"><%= columnName %></td>\
-				<td class="rows"><input type="radio" name="><%= columnName %>" value="labels" /></td>\
-				<td class="columns"><input type="radio" name="><%= columnName %>" value="categories" /></td>\
-				<td class="values"><input type="radio" name="><%= columnName %>" value="values" /></td>\
-				<td><input type="radio" name="><%= columnName %>" value="ignore" /></td>\
-		</tr>');
+var columnFieldTemplate = _.template('\
+	<th class="column column-<%= index %>">\
+		<select name=<%= name %>>\
+			<option value="labels">Rows</option>\
+			<option value="categories">Columns</option>\
+			<option value="values">Values</option>\
+			<option value="ignore">Ignore</option>\
+		</select>\
+	</th>\
+')
+
+var columnNameTemplate = _.template('\
+	<th class="column column-<%= index %>"><%= name %></th>\
+')
 
 // Global state
 var tableData = null;
@@ -62,9 +66,10 @@ function init() {
 	$sampleLink = $('#upload .sample');
 
 	$columnSection = $('#columns');
-	$columnCount = $('#columns .column-count');
-	$rowCount = $('#columns .row-count');
-	$columns = $('#columns tbody');
+	$columnFields = $('#columns tr.fields');
+	$columnNames = $('#columns tr.names');
+	$columnSample = $('#columns tbody');
+	// $columns = $('#columns tbody');
 	$columnWarnings = $('#columns .warnings')
 
 	$aggSection = $('#aggregation');
@@ -140,7 +145,7 @@ function onPasteChange(e) {
  */
 function onSampleLinkClick(e) {
 	e.preventDefault();
-	
+
 	$.get('data/sample.csv', function(data) {
 		$pasteInput.val(data);
 		$pasteInput.trigger('input');
@@ -182,7 +187,9 @@ function onDrop(e) {
  */
 function parse(f) {
 	$columnSection.hide();
-	$columns.html('');
+	$columnFields.html('');
+	$columnNames.html('');
+	$columnSample.html('');
 	$outputSection.hide();
 
 	$($pivottable).html('<p align="center" style="color:grey;">(processing...)</p>')
@@ -204,16 +211,20 @@ function onParsed(parseResult) {
 	columnNames = tableData[0];
 	columnUniques = new Array(columnNames.length);
 
-	$columnCount.text(columnNames.length);
-	$rowCount.text(tableData.length - 1);
-
 	_.each(columnNames, function(columnName, i) {
-		var column = columnTemplate({
-			'columnName': columnName
+		var $columnField = columnFieldTemplate({
+			'name': columnName,
+			'index': i,
+		})
+
+		$columnFields.append($columnField);
+
+		var $columnName = columnNameTemplate({
+			'name': columnName,
+			'index': i,
 		});
 
-		var $column = $(column);
-		$columns.append($column);
+		$columnNames.append($columnName);
 
 		var defaultUse = 'ignore';
 
@@ -223,9 +234,37 @@ function onParsed(parseResult) {
 			defaultUse = 'values';
 		}
 
-		$column.find('[value="' + defaultUse + '"]').attr('checked', 'checked');
-		$column.find('input').on('change', onColumnUseChange)
+		var $select = $columnFields.find('select[name="' + columnName + '"]');
+		$select.val(defaultUse);
+		$select.on('change', onColumnUseChange)
 	});
+
+	var sampleRows = Math.min(5, tableData.length - 1);
+
+	_.times(sampleRows, function(i) {
+		var row = tableData[i + 1];
+		var tableRow = '<tr>';
+
+		_.each(row, function(d, j) {
+			tableRow += '<td class="column column-' + j + '">' + d + '</td>';
+		});
+
+		tableRow += '</tr>';
+
+		$columnSample.append(tableRow);
+	});
+
+	if (sampleRows < tableData.length - 1) {
+		var tableRow = '<tr>';
+
+		_.times(columnNames.length, function(i) {
+			tableRow += '<td class="column column-' + i + '"><strong>...</strong></td>';
+		})
+
+		tableRow += '</tr>';
+
+		$columnSample.append(tableRow);
+	}
 
 	// Populate global state
 	onColumnUseChange();
@@ -244,9 +283,11 @@ function onColumnUseChange(e) {
 	valueColumns = [];
 
 	$columnWarnings.empty();
+	$('.column').removeClass('rows columns values');
 
 	_.each(columnNames, function(columnName, i) {
-		var use = $columns.find('input:checked').eq(i).val();
+		var $select = $columnFields.find('select[name="' + columnName + '"]');
+		var use = $select.val();
 
 		if (use == 'labels') {
 			if (labelColumn) {
@@ -254,14 +295,20 @@ function onColumnUseChange(e) {
 			}
 
 			labelColumn = columnName;
+
+			$('.column-' + i).addClass('rows');
 		} else if (use == 'categories') {
 			if (categoryColumn) {
 				$columnWarnings.append($('<p>🚨 You may only have one "Columns"! 🚨</p>'));
 			}
 
 			categoryColumn = columnName;
+
+			$('.column-' + i).addClass('columns');
 		} else if (use == 'values') {
 			valueColumns.push(columnName);
+
+			$('.column-' + i).addClass('values');
 		}
 	});
 
@@ -286,13 +333,13 @@ function onColumnUseChange(e) {
 
 	if (categoryColumn && labelColumn) {
 		aggregationRequired = true;
-		aggregationReason = 'Because you selected both <span class="rows">Rows</span> and <span class="columns">Columns</span>, you will need to decide how to summarize them.';
+		aggregationReason = 'Because you selected both <span class="rows">Rows</span> and <span class="columns">Columns</span>, you will need to decide how to summarize the groups of data that have the same values for both <span class="rows">Rows</span> and <span class="columns">Columns</span>.';
 	} else if (categoryColumn && !isColumnUnique(categoryColumn)) {
 		aggregationRequired = true;
-		aggregationReason = 'Because the <span class="columns">Columns</span> you selected contains repeating values, you will need to decide how to summarize them.';
+		aggregationReason = 'Because the data in your <span class="columns">Columns</span> column is not unique, you will need to decide how to summarize the groups of rows that have the same <span class="columns">Columns</span> value.';
 	} else if (labelColumn && !isColumnUnique(labelColumn)) {
 		aggregationRequired = true;
-		aggregationReason = 'Because the <span class="rows">Rows</span> you selected contains repeating values, you will need to decide how to summarize them.';
+		aggregationReason = 'Because the data in your <span class="rows">Rows</span> column is not unique, you will need to decide how to summarize the groups of rows that have the same <span class="rows">Rows</span> value.';
 	}
 
 	if (aggregationRequired) {

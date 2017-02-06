@@ -20,26 +20,14 @@ div#upload.section
 
 div#columns.section
     h2 Choose your columns
-    
-    p Your original table has <span class="column-count"></span> columns and <span class="row-count"></span> rows.
 
     p Please select how each column from the original table should be displayed in the new table. You will see a preview of the new table to the right. 👉🏽
     
-    ul
-        li <strong class="rows">Rows</strong> are the first column of the new table. These are used as the "labels" in Atlas. (Country names, for example.)
-        li <strong class="columns">Columns</strong> appear across the top of the table. One new column will be created for each unique value in the original column. Use this option when you want to display multiple data series on one Atlas chart.
-        li <strong class="values">Values</strong> are the numeric values that will be charted.
-    
     table
         thead
-            tr
-                th Original column
-                th Use as Rows
-                th Use as Columns
-                th Use as Values
-                th Ignore
+            tr.fields
+            tr.names
         tbody
-            form
             
     div.warnings
 
@@ -73,37 +61,38 @@ div#options.section
     
     p Use these options to further customize your table.
     
-    div.option
-        label Sort table
-            select#sort
-                option(value="rowAsc", selected="selected") Ascending by rows
-                option(value="rowDesc") Descending by rows
-                option(value="valueAsc") Ascending by value
-                option(value="valueDesc") Descending by value
-                option(value="none") In the same order as the original data
+    div.options
+        div.option
+            label Sort table
+                select#sort
+                    option(value="rowAsc", selected="selected") Ascending by rows
+                    option(value="rowDesc") Descending by rows
+                    option(value="valueAsc") Ascending by value
+                    option(value="valueDesc") Descending by value
+                    option(value="none") In the same order as the original data
 
-    div.option
-        label Divide values by
-            select#divide
-                option(value="1") Nothing
-                option(value="1000") 1,000
-                option(value="1000000") 1,000,000
-                option(value="1000000000") 1,000,000,000
-                option(value="1000000000000") 1,000,000,000,000
+        div.option
+            label Divide values by
+                select#divide
+                    option(value="1") Nothing
+                    option(value="1000") 1,000
+                    option(value="1000000") 1,000,000
+                    option(value="1000000000") 1,000,000,000
+                    option(value="1000000000000") 1,000,000,000,000
 
-    div.option
-        label Digits to include after a decimal point
-            select#decimal
-                option(value="0") 0
-                option(value="1") 1
-                option(value="2", selected="selected") 2
-                option(value="3") 3
+        div.option
+            label Digits to include after a decimal point
+                select#decimal
+                    option(value="0") 0
+                    option(value="1") 1
+                    option(value="2", selected="selected") 2
+                    option(value="3") 3
                 
     p You're done! Use the pink "Copy table for Atlas" button to copy the table to your clipboard. You can then paste it directly into Atlas.
         
 div#preview
     div.head
-        span Table preview
+        span Results preview
         button#copy Copy table for Atlas
 
     div#pivottable

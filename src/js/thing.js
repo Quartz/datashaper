@@ -14,6 +14,7 @@ var $columns = null;
 var $columnWarnings = null;
 var $aggSection = null;
 var $aggReason = null;
+var $aggControls = null;
 var $aggSelect = null;
 var $optionsSection = null;
 var $sortSelect = null;
@@ -74,6 +75,7 @@ function init() {
 
 	$aggSection = $('#aggregation');
 	$aggReason = $('#aggregation .reason');
+	$aggControls = $('#aggregation .controls');
 	$aggSelect = $('#aggregation select');
 
 	$optionsSection = $('#options');
@@ -342,12 +344,15 @@ function onColumnUseChange(e) {
 		aggregationReason = 'Because the data in your <span class="rows">Rows</span> column are not unique, you will need to decide how to summarize each group of rows that have the same value for <span class="rows">Rows</span>.';
 	}
 
-	if (aggregationRequired) {
-		$aggReason.html(aggregationReason);
-		$aggSection.show();
+	if (!aggregationRequired) {
+		aggregationReason = 'Your data does not require aggregation!'
+		$aggControls.hide();
 	} else {
-		$aggSection.hide();
+		$aggControls.show();
 	}
+
+	$aggReason.html(aggregationReason);
+	$aggSection.show();
 
 	// Unique category columns (transposition)
 	if (categoryColumn && isColumnUnique(categoryColumn)) {

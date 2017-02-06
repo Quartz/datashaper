@@ -4,7 +4,7 @@ div#intro.section
     p This tool reformats a CSV dataset so it will display well in <a href="https://www.theatlas.com/">Atlas</a>. If you are familiar with "pivot tables" in Excel or Google Spreadsheets, this works in a similar way.
 
 div#upload.section
-    h2 Upload a CSV file
+    h2 1. Upload a CSV file
 
     p Select a <code>.csv</code> file to upload. Your data must have a header row!
     
@@ -19,7 +19,7 @@ div#upload.section
     a.sample(href="#") Load sample state taxes dataset
 
 div#columns.section
-    h2 Choose your columns
+    h2 2. Choose your columns
 
     p Use the drop-downs to select how each column from the original table should be used in the new table. You can see a preview of the new table to the right. 👉🏽
     
@@ -32,33 +32,34 @@ div#columns.section
     div.warnings
 
 div#aggregation.section
-    h2 Decide how to aggregate values
+    h2 3. Decide how to aggregate values
     
     p.reason
     
-    p If you aren't sure what to pick, you may want to choose "Add values," which simply adds together the values of all rows in the group.
-    
-    p
-        label Choose a method:
-            select
-                option(value="sum", selected="selected") Add values
-                option(value="average") Average values
-                option(value="count") Count number of values
-                option(value="countUnique") Count number of unique values
-                option(value="min") Use smallest value
-                option(value="max") Use largest value
-                option(value="first") Use first value from the original data
-                option(value="last") Use last value from the original data
-                option(value="pct_sum_row") Add values and divide by total of new row (%)
-                option(value="pct_sum_col") Add values and divide by total of new column (%)
-                option(value="pct_sum_total") Add values and divide by total of new table (%)
-                option(value="pct_count_row") Count values and divide by total new row (%)
-                option(value="pct_count_col") Count values and divide by total of new column (%)
-                option(value="pct_count_total") Count values and divide by table of new table (%)
-            
+    div.controls
+        p If you aren't sure what to pick, you may want to choose "Add values," which simply adds together the values of all rows in the group.
+        
+        p
+            label Choose a method:
+                select
+                    option(value="sum", selected="selected") Add values
+                    option(value="average") Average values
+                    option(value="count") Count number of values
+                    option(value="countUnique") Count number of unique values
+                    option(value="min") Use smallest value
+                    option(value="max") Use largest value
+                    option(value="first") Use first value from the original data
+                    option(value="last") Use last value from the original data
+                    option(value="pct_sum_row") Add values and divide by total of new row (%)
+                    option(value="pct_sum_col") Add values and divide by total of new column (%)
+                    option(value="pct_sum_total") Add values and divide by total of new table (%)
+                    option(value="pct_count_row") Count values and divide by total new row (%)
+                    option(value="pct_count_col") Count values and divide by total of new column (%)
+                    option(value="pct_count_total") Count values and divide by table of new table (%)
+                
             
 div#options.section
-    h2 Tweak as needed
+    h2 4. Tweak as needed
     
     p Use these options to further customize your table.
     

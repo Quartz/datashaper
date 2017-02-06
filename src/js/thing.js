@@ -291,7 +291,7 @@ function onColumnUseChange(e) {
 
 		if (use == 'labels') {
 			if (labelColumn) {
-				$columnWarnings.append($('<p>🚨 You may only have one "Rows"! 🚨</p>'));
+				$columnWarnings.append($('<p>🚨 You may only have one "Rows"! Try setting other columns to "Ignore". 🚨</p>'));
 			}
 
 			labelColumn = columnName;
@@ -299,7 +299,7 @@ function onColumnUseChange(e) {
 			$('.column-' + i).addClass('rows');
 		} else if (use == 'categories') {
 			if (categoryColumn) {
-				$columnWarnings.append($('<p>🚨 You may only have one "Columns"! 🚨</p>'));
+				$columnWarnings.append($('<p>🚨 You may only have one "Columns"! Try setting other columns to "Ignore". 🚨</p>'));
 			}
 
 			categoryColumn = columnName;

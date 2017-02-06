@@ -38,22 +38,23 @@ div#aggregation.section
     
     p If you aren't sure what to pick, you may want to choose "Add values," which will simple together the values from all rows in the group.
     
-    label Choose a method:
-        select
-            option(value="sum", selected="selected") Add values
-            option(value="average") Average values
-            option(value="count") Count number of values
-            option(value="countUnique") Count number of unique values
-            option(value="min") Use smallest value
-            option(value="max") Use largest value
-            option(value="first") Use first value from the original data
-            option(value="last") Use last value from the original data
-            option(value="pct_sum_row") Add values and divide by total of new row (%)
-            option(value="pct_sum_col") Add values and divide by total of new column (%)
-            option(value="pct_sum_total") Add values and divide by total of new table (%)
-            option(value="pct_count_row") Count values and divide by total new row (%)
-            option(value="pct_count_col") Count values and divide by total of new column (%)
-            option(value="pct_count_total") Count values and divide by table of new table (%)
+    p
+        label Choose a method:
+            select
+                option(value="sum", selected="selected") Add values
+                option(value="average") Average values
+                option(value="count") Count number of values
+                option(value="countUnique") Count number of unique values
+                option(value="min") Use smallest value
+                option(value="max") Use largest value
+                option(value="first") Use first value from the original data
+                option(value="last") Use last value from the original data
+                option(value="pct_sum_row") Add values and divide by total of new row (%)
+                option(value="pct_sum_col") Add values and divide by total of new column (%)
+                option(value="pct_sum_total") Add values and divide by total of new table (%)
+                option(value="pct_count_row") Count values and divide by total new row (%)
+                option(value="pct_count_col") Count values and divide by total of new column (%)
+                option(value="pct_count_total") Count values and divide by table of new table (%)
             
             
 div#options.section
@@ -61,7 +62,7 @@ div#options.section
     
     p Use these options to further customize your table.
     
-    div.options
+    p.options
         div.option
             label Sort table
                 select#sort

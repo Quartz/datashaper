@@ -40,8 +40,8 @@ body
 .section
     display none
     width 50%
-    margin-top 25px
-    padding-top 25px
+    margin-top 20px
+    padding-top 20px
     border-top 1px solid #eee
 
 #intro
@@ -63,6 +63,7 @@ body
 
     .sample
         font-size 12px
+        font-family $qz-sans
 
 #columns
     .column-count, .row-count
@@ -79,6 +80,7 @@ body
         width: 100%
         margin 10px 0
         font-size 14px
+        font-family $qz-sans
 
         th
             text-align left
@@ -115,22 +117,23 @@ body
 
     label
         font-weight bold
+        font-family $qz-sans
+        font-size 16px
 
         select
             font-weight normal
 
 #options
-    .options
-        padding 10px 0
+    .option
+        margin-bottom 10px
 
-        .option
-            margin-bottom 10px
+        label
+            font-weight bold
+            font-family $qz-sans
+            font-size 16px
 
-            label
-                font-weight bold
-
-                select
-                    font-weight normal
+            select
+                font-weight normal
 
 #preview
     display: none
@@ -164,7 +167,8 @@ body
                 outline 0
 
     table
-        font-size 12px
+        font-size 14px
+        font-family $qz-sans
         text-align left
         border-collapse collapse
 

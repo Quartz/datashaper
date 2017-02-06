@@ -8,6 +8,7 @@ var $body = null;
 var $uploadSection = null;
 var $csvInput = null;
 var $pasteInput = null;
+var $sampleLink = null;
 var $columnSection = null;
 var $columnCount = null;
 var $rowCount = null;
@@ -58,6 +59,7 @@ function init() {
 	$uploadSection = $('#upload');
 	$csvInput = $('#upload input');
 	$pasteInput = $('#upload textarea');
+	$sampleLink = $('#upload .sample');
 
 	$columnSection = $('#columns');
 	$columnCount = $('#columns .column-count');
@@ -87,6 +89,7 @@ function init() {
 	$html.on('drop', onDrop);
 	$csvInput.bind('change', onCSVChange);
 	$pasteInput.on('input onpropertychange', onPasteChange);
+	$sampleLink.on('click', onSampleLinkClick);
 	$aggSelect.bind('change', onAggSelectChange);
 	$sortSelect.bind('change', onSortSelectChange);
 	$divideSelect.bind('change', onDivideSelectChange);
@@ -130,6 +133,18 @@ function onCSVChange(e) {
  */
 function onPasteChange(e) {
 	parse($(this).val());
+}
+
+/*
+ * Sample link clicked.
+ */
+function onSampleLinkClick(e) {
+	e.preventDefault();
+	
+	$.get('data/sample.csv', function(data) {
+		$pasteInput.val(data);
+		$pasteInput.trigger('input');
+	});
 }
 
 /*

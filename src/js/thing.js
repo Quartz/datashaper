@@ -336,10 +336,10 @@ function onColumnUseChange(e) {
 		aggregationReason = 'Because you selected both <span class="rows">Rows</span> and <span class="columns">Columns</span>, you will need to decide how to summarize each group of row that have the same values for both <span class="rows">Rows</span> and <span class="columns">Columns</span>.';
 	} else if (categoryColumn && !isColumnUnique(categoryColumn)) {
 		aggregationRequired = true;
-		aggregationReason = 'Because the data in your <span class="columns">Columns</span> column is not unique, you will need to decide how to summarize each group of rows that have the same value for <span class="columns">Columns</span>.';
+		aggregationReason = 'Because the data in your <span class="columns">Columns</span> column are not unique, you will need to decide how to summarize each group of rows that have the same value for <span class="columns">Columns</span>.';
 	} else if (labelColumn && !isColumnUnique(labelColumn)) {
 		aggregationRequired = true;
-		aggregationReason = 'Because the data in your <span class="rows">Rows</span> column is not unique, you will need to decide how to summarize each group of rows that have the same value for <span class="rows">Rows</span>.';
+		aggregationReason = 'Because the data in your <span class="rows">Rows</span> column are not unique, you will need to decide how to summarize each group of rows that have the same value for <span class="rows">Rows</span>.';
 	}
 
 	if (aggregationRequired) {

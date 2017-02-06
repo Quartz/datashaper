@@ -21,7 +21,7 @@ div#upload.section
 div#columns.section
     h2 Choose your columns
 
-    p Please select how each column from the original table should be displayed in the new table. You will see a preview of the new table to the right. 👉🏽
+    p Use the drop-downs to select how each column from the original table should be used in the new table. You can see a preview of the new table to the right. 👉🏽
     
     table
         thead
@@ -36,7 +36,7 @@ div#aggregation.section
     
     p.reason
     
-    p If you aren't sure what to pick, you probably want to choose <strong>add values</strong>.
+    p If you aren't sure what to pick, you may want to choose "Add values," which will simple together the values from all rows in the group.
     
     label Choose a method:
         select
@@ -81,12 +81,12 @@ div#options.section
                     option(value="1000000000000") 1,000,000,000,000
 
         div.option
-            label Digits to include after a decimal point
+            label Round to
                 select#decimal
-                    option(value="0") 0
-                    option(value="1") 1
-                    option(value="2", selected="selected") 2
-                    option(value="3") 3
+                    option(value="0") Whole number
+                    option(value="1") 1 decimal place
+                    option(value="2", selected="selected") 2 decimal places
+                    option(value="3") 3 decimal places
                 
     p You're done! Use the pink "Copy table for Atlas" button to copy the table to your clipboard. You can then paste it directly into Atlas.
         

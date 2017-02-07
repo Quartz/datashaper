@@ -77,33 +77,33 @@ body
             font-size 18px
             line-height 24px
 
-    table
-        width: 100%
-        margin 10px 0
-        font-size 14px
-        font-family $qz-sans
+    .table-wrapper
+        overflow-x: scroll
 
-        th
-            text-align left
-            vertical-align bottom
+        table
+            width: 100%
+            margin 10px 0
+            font-size 14px
+            font-family $qz-sans
 
-            select
-                font-weight normal
-                width 100%
+            th
+                text-align left
+                vertical-align bottom
 
-        tr.names
-            border-bottom 1px solid $qz-gray-1
+                select
+                    font-weight normal
+                    width 100%
 
-        th, td
-            padding 5px 15px 5px 5px
-            text-align left
-            width 15%
+            tr.names
+                border-bottom 1px solid $qz-gray-1
 
-            &.name
-                width 25%
+            th, td
+                padding 5px 15px 5px 5px
+                text-align left
+                min-width 85px
 
-        tr th:first-child, tr td:first-child
-            text-align left
+            tr th:first-child, tr td:first-child
+                text-align left
 
     .warnings
         margin-top 10px
@@ -167,28 +167,31 @@ body
             &:focus
                 outline 0
 
-    table
-        font-size 14px
-        font-family $qz-sans
-        text-align left
-        border-collapse collapse
+    #pivottable
+        overflow-x: scroll
 
-        th
-            font-weight bold
+        table
+            font-size 14px
+            font-family $qz-sans
+            text-align left
+            border-collapse collapse
 
-        th, td
-            padding 5px
-            border 1px solid $qz-gray-1
-            text-align right
+            th
+                font-weight bold
 
-            &.rows
-                background-color $rowColor
+            th, td
+                padding 5px
+                border 1px solid $qz-gray-1
+                text-align right
 
-            &.columns
-                background-color $colColor
+                &.rows
+                    background-color $rowColor
 
-            &.values
-                background-color $valColor
+                &.columns
+                    background-color $colColor
+
+                &.values
+                    background-color $valColor
 
     #copytable
         display none

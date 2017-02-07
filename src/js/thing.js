@@ -431,23 +431,17 @@ function onDecimalSelectChange(e) {
  * Execute pivot.
  */
 function pivot(toClipboard) {
-	var thousandsSep =  ',';
+	var useThousandsSep =  true;
 	var renderer = renderers.previewRenderer;
 	var $el = $pivottable;
 
 	if (toClipboard) {
-		thousandsSep = '';
+		thousandsSep = false;
 		renderer = renderers.atlasTSVRenderer;
 		$el = $copytable;
 	}
 
-	var numberFormat = $.pivotUtilities.numberFormat;
-	var precFormat = numberFormat({
-		scaler: 1 / divideBy,
-		digitsAfterDecimal: decimalPrec,
-		thousandsSep: thousandsSep
-	});
-
+	var fmt = null;
 	var aggregator = null;
 
 	if (agg.startsWith('pct')) {
@@ -460,15 +454,11 @@ function pivot(toClipboard) {
 			total = $.pivotUtilities.aggregatorTemplates.count();
 		}
 
-		var pctFormat = numberFormat({
-			digitsAfterDecimal: decimalPrec,
-			scaler: 100 * (1 / divideBy),
-			suffix: "%"
-		})
-
+		fmt = numberFormat(divideBy, decimalPrec, true, useThousandsSep);
 		aggregator = $.pivotUtilities.aggregatorTemplates.fractionOf(total, bits[2], pctFormat)([valueColumns[0]]);
 	} else {
-		aggregator = $.pivotUtilities.aggregatorTemplates[agg](precFormat)([valueColumns[0]]);
+		fmt = numberFormat(divideBy, decimalPrec, false, useThousandsSep);
+		aggregator = $.pivotUtilities.aggregatorTemplates[agg](fmt)([valueColumns[0]]);
 	}
 
 	if (aggregationRequired) {
@@ -528,9 +518,9 @@ function pivot(toClipboard) {
 
 				return {
 					value: function() {
-						return tableData[rowIndex + 1][columnIndex];
+						return parseFloat(tableData[rowIndex + 1][columnIndex]);
 					},
-					format: precFormat
+					format: fmt
 				}
 			}
 		}, {
@@ -542,6 +532,60 @@ function pivot(toClipboard) {
 		return $el.find('textarea').val();
 	}
 }
+
+/*
+ * Generate number formatters
+ */
+var numberFormat = function(divisor, decimalPlaces, pct, groups){
+	return function(x) {
+		if (isNaN(x) || !isFinite(x)) {
+			return '';
+		}
+
+		if (x == 0) {
+			return '';
+		}
+
+		if (pct) {
+			divisor *= 100;
+		}
+
+		result = (x / divisor).toFixed(decimalPlaces)
+
+		if (groups) {
+			result = addSeparators(result);
+		}
+
+		if (pct) {
+			result += '%';
+		}
+
+		return result;
+	}
+}
+
+/*
+ * Add number grouping commas.
+ */
+function addSeparators(nStr) {
+	nStr += '';
+	var x = nStr.split('.');
+	var x1 = x[0];
+	var x2 = '';
+
+	if (x.length > 1) {
+		x2 = '.' + x[1];
+	}
+
+	var rgx = /(\d+)(\d{3})/;
+
+	while (rgx.test(x1)) {
+		x1 = x1.replace(rgx, '$1' + ',' + '$2');
+	}
+
+	return x1 + x2;
+}
+
 
 function log(msg) {
 	console.log(msg);

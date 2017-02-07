@@ -7,16 +7,16 @@ var _ = require('lodash');
 function previewRenderer(pivotData, opts) {
     opts = $.extend({}, opts);
 
-    colAttrs = pivotData.colAttrs;
-    rowAttrs = pivotData.rowAttrs;
-    colKeys = pivotData.getColKeys();
+    var colAttrs = pivotData.colAttrs;
+    var rowAttrs = pivotData.rowAttrs;
+    var colKeys = pivotData.getColKeys();
 
-    result = document.createElement("table");
-    thead = document.createElement("thead");
-    tr = document.createElement("tr");
+    var result = document.createElement("table");
+    var thead = document.createElement("thead");
+    var tr = document.createElement("tr");
 
     // Label column header
-    th = document.createElement("th");
+    var th = document.createElement("th");
     th.className = 'rows';
     th.textContent = rowAttrs[0] || '';
     tr.appendChild(th);
@@ -43,9 +43,8 @@ function previewRenderer(pivotData, opts) {
     thead.appendChild(tr);
     result.appendChild(thead);
 
-    rows = getSortedRows(pivotData, opts.sortOrder);
-
-    tbody = document.createElement("tbody");
+    var rows = getSortedRows(pivotData, opts.sortOrder);
+    var tbody = document.createElement("tbody");
 
     // Data rows
     _.each(rows, function(row, i) {
@@ -80,6 +79,7 @@ function previewRenderer(pivotData, opts) {
  */
 function atlasTSVRenderer(pivotData, opts) {
 	var colKeys = pivotData.getColKeys();
+    var rowAttrs = pivotData.rowAttrs;
 
 	if (colKeys.length == 0) {
 		colKeys.push([]);

@@ -11,7 +11,6 @@ var $pasteInput = null;
 var $sampleLink = null;
 var $columnSection = null;
 var $columns = null;
-var $columnWarnings = null;
 var $aggSection = null;
 var $aggReason = null;
 var $aggControls = null;
@@ -22,7 +21,9 @@ var $divideSelect = null;
 var $decimalSelect = null;
 var $preview = null;
 var $pivottable = null;
+var $error = null;
 var $copytable = null;
+var $copyButton = null;
 
 var columnFieldTemplate = _.template('\
 	<th class="column column-<%= index %>">\
@@ -36,7 +37,7 @@ var columnFieldTemplate = _.template('\
 ')
 
 var columnNameTemplate = _.template('\
-	<th class="column column-<%= index %>"><%= name %></th>\
+	<th class="column column-<%= index %>"><%= name %><% if (isUnique) { %><sup>*</sup><% } %></th>\
 ')
 
 // Global state
@@ -70,8 +71,6 @@ function init() {
 	$columnFields = $('#columns tr.fields');
 	$columnNames = $('#columns tr.names');
 	$columnSample = $('#columns tbody');
-	// $columns = $('#columns tbody');
-	$columnWarnings = $('#columns .warnings')
 
 	$aggSection = $('#aggregation');
 	$aggReason = $('#aggregation .reason');
@@ -87,7 +86,9 @@ function init() {
 
 	$preview = $('#preview')
 	$pivottable = $('#pivottable');
+	$error = $('#error')
 	$copytable = $('#copytable');
+	$copyButton = $('#copy');
 
 	$html.on('dragover', onDrag);
 	$html.on('dragend', onDragEnd);
@@ -214,6 +215,8 @@ function onParsed(parseResult) {
 	columnUniques = new Array(columnNames.length);
 
 	_.each(columnNames, function(columnName, i) {
+		columnUniques[columnName] = isColumnUnique(columnName);
+
 		var $columnField = columnFieldTemplate({
 			'name': columnName,
 			'index': i,
@@ -224,6 +227,7 @@ function onParsed(parseResult) {
 		var $columnName = columnNameTemplate({
 			'name': columnName,
 			'index': i,
+			'isUnique': columnUniques[columnName]
 		});
 
 		$columnNames.append($columnName);
@@ -284,8 +288,10 @@ function onColumnUseChange(e) {
 	categoryColumn = null;
 	valueColumns = [];
 
-	$columnWarnings.empty();
+	$error.empty();
 	$('.column').removeClass('rows columns values');
+
+	var columnError = null;
 
 	_.each(columnNames, function(columnName, i) {
 		var $select = $columnFields.find('select[name="' + columnName + '"]');
@@ -293,7 +299,8 @@ function onColumnUseChange(e) {
 
 		if (use == 'labels') {
 			if (labelColumn) {
-				$columnWarnings.append($('<p>🚨 You may only have one "Rows"! Try setting other columns to "Ignore". 🚨</p>'));
+				columnError = 'You may only have one <span class="rows">Rows</span> column! Try setting other columns to <span class="ignore">Ignore</span>.';
+				return false;
 			}
 
 			labelColumn = columnName;
@@ -301,7 +308,8 @@ function onColumnUseChange(e) {
 			$('.column-' + i).addClass('rows');
 		} else if (use == 'categories') {
 			if (categoryColumn) {
-				$columnWarnings.append($('<p>🚨 You may only have one "Columns"! Try setting other columns to "Ignore". 🚨</p>'));
+				columnError = 'You may only have one <span class="columns">Columns</span> column! Try setting other columns to <span class="ignore">Ignore</span>.';
+				return false;
 			}
 
 			categoryColumn = columnName;
@@ -314,34 +322,40 @@ function onColumnUseChange(e) {
 		}
 	});
 
+	if (columnError) {
+		showError(columnError);
+		return;
+	}
+
 	if (labelColumn === null) {
-		$columnWarnings.append($('<p>🚨 You must select a "Rows" column! 🚨</p>'));
+		showError('You must select a <span class="rows">Rows</span> column!');
 		return;
 	}
 
 	if (valueColumns.length == 0) {
-		$columnWarnings.append($('<p>🚨 You must select at least one "Values" column! 🚨</p>'));
+		showError('You must select at least one <span class="values">Values</span> column!');
 		return;
 	}
 
 	if (valueColumns.length > 1 && categoryColumn) {
-		$columnWarnings.append($('<p>🚨 You may not select multiple "Values" and "Columns" at the same time! 🚨</p>'));
+		showError('You may not select multiple <span class="values">Values</span> columns and a <span class="columns">Columns</span> column at the same time!');
 		return;
-	} else if (labelColumn && valueColumns.length > 1 && !isColumnUnique(labelColumn)) {
-		$columnWarnings.append($('<p>🚨 You may not select multiple "Values" if your "Rows" data are not unique. 🚨</p>'))
+	} else if (labelColumn && valueColumns.length > 1 && !columnUniques[labelColumn]) {
+		showError('You may not select multiple <span class="values">Values</span> columns unless the values in your <span class="rows">Rows</span> column are not unique.');
+		return;
 	}
 
 	aggregationRequired = false;
 
 	if (categoryColumn && labelColumn) {
 		aggregationRequired = true;
-		aggregationReason = 'Because you selected both <span class="rows">Rows</span> and <span class="columns">Columns</span>, you will need to decide how to summarize each group of row that have the same values for both <span class="rows">Rows</span> and <span class="columns">Columns</span>.';
-	} else if (categoryColumn && !isColumnUnique(categoryColumn)) {
+		aggregationReason = 'Because you selected both a <span class="rows">Rows</span> column and a <span class="columns">Columns</span> column, you will need to decide how to summarize each set of rows that share the same values for both.';
+	} else if (categoryColumn && !columnUniques[categoryColumn]) {
 		aggregationRequired = true;
-		aggregationReason = 'Because the data in your <span class="columns">Columns</span> column are not unique, you will need to decide how to summarize each group of rows that have the same value for <span class="columns">Columns</span>.';
-	} else if (labelColumn && !isColumnUnique(labelColumn)) {
+		aggregationReason = 'Because the values in your <span class="columns">Columns</span> column are not unique, you must decide how to summarize each set of rows that share the same value.';
+	} else if (labelColumn && !columnUniques[labelColumn]) {
 		aggregationRequired = true;
-		aggregationReason = 'Because the data in your <span class="rows">Rows</span> column are not unique, you will need to decide how to summarize each group of rows that have the same value for <span class="rows">Rows</span>.';
+		aggregationReason = 'Because the values in your <span class="rows">Rows</span> column are not unique, you must decide how to summarize each set of rows that share the same value.';
 	}
 
 	if (!aggregationRequired) {
@@ -355,13 +369,20 @@ function onColumnUseChange(e) {
 	$aggSection.show();
 
 	// Unique category columns (transposition)
-	if (categoryColumn && isColumnUnique(categoryColumn)) {
+	if (categoryColumn && columnUniques[categoryColumn]) {
 		// Bypass user aggregation selection and just use first value
 		aggregationRequired = true;
 		agg = 'first';
 	}
 
 	pivot(false);
+}
+
+function showError(msg) {
+	$pivottable.hide();
+	$copyButton.hide()
+	$error.html('⚡️ ' + msg);
+	$error.show();
 }
 
 /*
@@ -531,6 +552,9 @@ function pivot(toClipboard) {
 	if (toClipboard) {
 		return $el.find('textarea').val();
 	}
+
+	$pivottable.show();
+	$copyButton.show();
 }
 
 /*

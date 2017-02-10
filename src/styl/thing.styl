@@ -9,13 +9,19 @@ body
     height 100
 
 .rows
+    font-weight bold
     background-color $rowColor
 
 .columns
+    font-weight bold
     background-color $colColor
 
 .values
+    font-weight bold
     background-color $valColor
+
+.ignore
+    font-weight bold
 
 .drop-border
     border-color lightgrey
@@ -47,6 +53,8 @@ body
 #intro
     display block
     margin-top 5px
+    padding-top 0
+    border-top none
 
 #upload
     input
@@ -105,12 +113,10 @@ body
             tr th:first-child, tr td:first-child
                 text-align left
 
-    .warnings
-        margin-top 10px
+    .footnote
+        font 14px $qz-sans
+        color: #888
 
-        p
-            color: $qz-error
-            font-weight bold
 
 #aggregation
     p.reason span
@@ -146,11 +152,8 @@ body
     .head
         height 45px
 
-        span
-            font-weight bold
-            font-family $qz-sans
-            line-height 2em
-            font-size 16px
+        h2
+            display inline
 
         button
             float right
@@ -192,6 +195,9 @@ body
 
                 &.values
                     background-color $valColor
+
+    #error
+        margin-right 14px
 
     #copytable
         display none

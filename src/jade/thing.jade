@@ -30,7 +30,8 @@ div#columns.section
                 tr.names
             tbody
             
-    div.warnings
+    p.footnote <sup>*</sup>Starred columns contain only unique values.
+    
 
 div#aggregation.section
     h2 3. Decide how to aggregate values
@@ -38,7 +39,7 @@ div#aggregation.section
     p.reason
     
     div.controls
-        p If you aren't sure what to pick, you may want to choose "Add values," which simply adds together the values of all rows in the group.
+        p The most common choices are <strong>Add values</strong>, which will sum the values of all rows in the set, and <strong>Count</strong>, which will count the number of values in the set.
         
         p
             label Choose a method:
@@ -95,9 +96,11 @@ div#options.section
         
 div#preview
     div.head
-        span Results preview
+        h2 Results
         button#copy Copy table for Atlas
 
     div#pivottable
+    
+    p#error
 
     div#copytable

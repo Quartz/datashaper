@@ -241,7 +241,7 @@ function onParsed(parseResult) {
 		$select.on('change', onColumnUseChange)
 	});
 
-	var sampleRows = Math.min(5, tableData.length - 1);
+	var sampleRows = Math.min(10, tableData.length - 1);
 
 	_.times(sampleRows, function(i) {
 		var row = tableData[i + 1];

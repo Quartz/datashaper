@@ -574,7 +574,9 @@ var numberFormat = function(divisor, decimalPlaces, pct, groups){
 			divisor *= 100;
 		}
 
-		result = (x / divisor).toFixed(decimalPlaces)
+		var pow =  Math.pow(10, decimalPlaces);
+
+		result = (Math.round(x / divisor * pow) / pow).toFixed(decimalPlaces);
 
 		if (groups) {
 			result = addSeparators(result);
